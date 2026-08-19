@@ -4,7 +4,7 @@ Website for [The Good News Mission](https://nuruplace.org), a missionary sending
 church on Kangundo Road, Saika Estate, Nairobi.
 
 Built with **Next.js 16** (App Router), **React 19**, **TypeScript** and
-**Tailwind CSS v4**.
+**Tailwind CSS v4**. Bilingual: **English and Kiswahili**.
 
 ---
 
@@ -31,6 +31,16 @@ Other scripts:
 **Almost all text lives in `src/content/`.** You do not need to touch React
 components to change wording, add a sermon, or publish a blog post.
 
+Every piece of content carries both languages side by side:
+
+```ts
+name: { en: "Ablaze Worship", sw: "Ibada ya Ablaze" },
+```
+
+A missing translation is a TypeScript error rather than a page that silently
+falls back to English, so nothing goes stale unnoticed. UI chrome (buttons,
+labels) lives in `src/i18n/dictionary.ts`.
+
 | File | Controls |
 |---|---|
 | `site.ts` | Church name, tagline, phone, email, address, giving links, social links, and the navigation menu |
@@ -41,6 +51,8 @@ components to change wording, add a sermon, or publish a blog post.
 | `posts.ts` | Blog articles — each becomes a `/blog/<slug>` page |
 | `leadership.ts` | Names, roles and bios on `/our-leadership` |
 | `pages.ts` | Long-form pages: About, Our Faith, Statutes, Strategic Plan, the Pastor's and First Lady's messages, Resources |
+| `visit.ts` | Plan Your Visit — the questions a first-time guest actually asks |
+| `photos.ts` | Photograph slots; see `public/photos/README.md` for the shot list |
 
 ### Adding a blog post
 
@@ -139,3 +151,78 @@ docker run -p 3000:3000 nuruplace
 
 Once the rebuild replaces the live site, point the `nuruplace.org` DNS record at
 the new deployment.
+
+---
+
+## Languages
+
+Every page lives under a locale segment: `/en/...` and `/sw/...`. A request
+without one is redirected by `src/proxy.ts`, which picks the language from a
+remembered cookie first, then the browser's `Accept-Language`, then English.
+
+`hreflang` tags and per-URL sitemap alternates tell search engines the two
+versions are the same page, so neither outranks the other by accident.
+
+To add a third language: add it to `locales` in `src/i18n/config.ts` and
+TypeScript will list every string that still needs translating.
+
+> **The Kiswahili has not been reviewed by a first-language speaker.** It was
+> written for the rebuild and reads correctly, but have someone in the church
+> read it before launch — especially **Our Faith**, where doctrinal precision
+> matters more than fluency.
+
+---
+
+## The contact form
+
+`/plan-your-visit` and `/contact-us` share one connection card. It has a
+honeypot field for spam, validates server-side, and **refuses to submit unless
+a destination is configured** — a church form that silently drops a message is
+worse than no form, because someone reaches out at a hard moment and hears
+nothing back.
+
+Copy `.env.example` to `.env.local` and set **one** of:
+
+```bash
+# Option A — POST the submission to an endpoint you own
+CONTACT_WEBHOOK_URL=https://example.org/hooks/website-contact
+
+# Option B — hand off to an email provider that accepts a simple POST
+CONTACT_EMAIL_TO=pastor@thegoodnewsmission.org
+CONTACT_EMAIL_API=https://api.resend.com/emails
+CONTACT_EMAIL_KEY=re_xxxxxxxxxxxx
+```
+
+Until then the form tells visitors to call or WhatsApp instead, and logs an
+error server-side. That is deliberate: it fails where you can see it.
+
+---
+
+## Performance
+
+Measured on a cold mobile load (390px, compressed over the wire):
+
+| Page | Transferred |
+|---|---|
+| Home | ~286 KB |
+| Plan Your Visit | ~271 KB |
+
+About 86 KB of that is the two font families. Kenyan mobile data runs several
+times European prices, so that is a real trade — dropping Merienda (used only
+for scripture pull-quotes and eyebrow text) would save roughly 35 KB. It is a
+brand decision, not a bug, so it has been left alone.
+
+`axe-core` reports **zero accessibility violations** across both languages.
+Keep it that way: run the audit before shipping visual changes.
+
+---
+
+## Before this goes live
+
+- [ ] Have a first-language Kiswahili speaker review the translations
+- [ ] Confirm the Plan Your Visit specifics — parking, crèche ages, how long the service really runs
+- [ ] Add the three photographs in `public/photos/README.md`
+- [ ] Configure a contact destination (above), then send a real test message
+- [ ] Fill in leadership names, roles and portraits
+- [ ] Supply Our Statutes and the First Lady's message
+- [ ] Register with the ODPC and complete a data protection impact assessment before collecting anything — the form takes names, phone numbers and prayer requests, and Kenya's Data Protection Act treats religious belief as sensitive personal data

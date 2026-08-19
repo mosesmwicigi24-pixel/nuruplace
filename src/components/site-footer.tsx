@@ -1,10 +1,15 @@
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
-import { footerQuickLinks, site } from "@/content/site";
+import { getFooterLinks, site } from "@/content/site";
 import { ministries } from "@/content/ministries";
+import { t } from "@/content/localized";
+import { getDictionary } from "@/i18n/dictionary";
+import { localePath, type Locale } from "@/i18n/config";
 
-export function SiteFooter() {
+export function SiteFooter({ locale }: { locale: Locale }) {
   const year = new Date().getFullYear();
+  const dict = getDictionary(locale);
+  const links = getFooterLinks(locale);
 
   return (
     <footer className="bg-ink-900 text-slate-300">
@@ -17,9 +22,9 @@ export function SiteFooter() {
             <span className="font-bold text-white">{site.name}</span>
           </div>
           <p className="mt-4 text-sm leading-relaxed">
-            A missionary sending church. We desire to show the love of Christ to
-            all people by sharing the Good News of our Lord Jesus Christ with
-            every soul across the world.
+            {locale === "sw"
+              ? "Kanisa linalotuma wamisionari. Tunatamani kuonyesha upendo wa Kristo kwa watu wote kwa kushiriki Habari Njema ya Bwana wetu Yesu Kristo na kila mtu duniani kote."
+              : "A missionary sending church. We desire to show the love of Christ to all people by sharing the Good News of our Lord Jesus Christ with every soul across the world."}
           </p>
           <div className="mt-5 flex flex-wrap gap-3">
             {site.socials.map((s) => (
@@ -38,10 +43,10 @@ export function SiteFooter() {
 
         <div>
           <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-            Quick Links
+            {dict.common.quickLinks}
           </h2>
           <ul className="mt-4 space-y-2 text-sm">
-            {footerQuickLinks.map((l) => (
+            {links.map((l) => (
               <li key={l.href}>
                 <Link href={l.href} className="hover:text-brand-300">
                   {l.label}
@@ -53,16 +58,16 @@ export function SiteFooter() {
 
         <div>
           <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-            Our Ministries
+            {dict.common.ourMinistries}
           </h2>
           <ul className="mt-4 space-y-2 text-sm">
             {ministries.map((m) => (
               <li key={m.slug}>
                 <Link
-                  href={`/ministries/${m.slug}`}
+                  href={localePath(locale, `/ministries/${m.slug}`)}
                   className="hover:text-brand-300"
                 >
-                  {m.name}
+                  {t(m.name, locale)}
                 </Link>
               </li>
             ))}
@@ -71,7 +76,7 @@ export function SiteFooter() {
 
         <div>
           <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-            Contact Us
+            {dict.common.contactUs}
           </h2>
           <ul className="mt-4 space-y-3 text-sm">
             <li className="flex gap-3">

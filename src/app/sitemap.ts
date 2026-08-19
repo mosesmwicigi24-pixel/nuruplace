@@ -2,9 +2,11 @@ import type { MetadataRoute } from "next";
 import { site } from "@/content/site";
 import { ministries } from "@/content/ministries";
 import { posts } from "@/content/posts";
+import { locales, localeTags } from "@/i18n/config";
 
-const staticRoutes = [
+const paths = [
   "",
+  "/plan-your-visit",
   "/about-us",
   "/our-faith",
   "/our-statutes",
@@ -22,12 +24,20 @@ const staticRoutes = [
   "/resources",
   "/shop",
   "/contact-us",
+  ...ministries.map((m) => `/ministries/${m.slug}`),
+  ...posts.map((p) => `/blog/${p.slug}`),
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    ...staticRoutes.map((path) => ({ url: `${site.url}${path}` })),
-    ...ministries.map((m) => ({ url: `${site.url}/ministries/${m.slug}` })),
-    ...posts.map((p) => ({ url: `${site.url}/blog/${p.slug}` })),
-  ];
+  return locales.flatMap((locale) =>
+    paths.map((path) => ({
+      url: `${site.url}/${locale}${path}`,
+      // Tell crawlers each page has a sibling in the other language.
+      alternates: {
+        languages: Object.fromEntries(
+          locales.map((l) => [localeTags[l], `${site.url}/${l}${path}`]),
+        ),
+      },
+    })),
+  );
 }

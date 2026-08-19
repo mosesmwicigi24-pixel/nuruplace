@@ -1,19 +1,21 @@
-/**
- * Global site settings: identity, contact details, socials and navigation.
- * Edit this file to change what appears in the header, footer and contact page.
- */
+import type { Locale } from "@/i18n/config";
+import { getDictionary } from "@/i18n/dictionary";
+import { localePath } from "@/i18n/config";
 
+/**
+ * Global site settings. Contact details and links are language-neutral;
+ * navigation labels come from the dictionary so the menu translates with
+ * everything else.
+ */
 export const site = {
   name: "The Good News Mission",
   shortName: "TGNM",
-  tagline: "Where Everyone is Someone!",
-  description:
-    "The Good News Mission is a dynamic, multicultural, missionary sending church in Nairobi, Kenya. Join us every Sunday to celebrate Jesus and our faith in Him.",
   url: "https://nuruplace.org",
   contact: {
     email: "pastor@thegoodnewsmission.org",
     phone: "+254 700706875",
     phoneHref: "tel:+254700706875",
+    whatsappHref: "https://wa.me/254700706875",
     address: "Kangundo Road, Saika Estate, Near Kayole Junction",
     city: "Nairobi, Kenya",
   },
@@ -29,50 +31,72 @@ export const site = {
   ],
 } as const;
 
+/** Tagline is content, so it translates. */
+export const tagline: Record<Locale, string> = {
+  en: "Where Everyone is Someone!",
+  sw: "Mahali Kila Mtu ni Mtu!",
+};
+
+export const description: Record<Locale, string> = {
+  en: "The Good News Mission is a dynamic, multicultural, missionary sending church in Nairobi, Kenya. Join us every Sunday to celebrate Jesus and our faith in Him.",
+  sw: "The Good News Mission ni kanisa lenye uhai, la tamaduni mbalimbali, linalotuma wamisionari, hapa Nairobi, Kenya. Ungana nasi kila Jumapili kumsherehekea Yesu na imani yetu kwake.",
+};
+
 export type NavItem = {
   label: string;
   href: string;
   children?: { label: string; href: string }[];
 };
 
-export const mainNav: NavItem[] = [
-  { label: "Home", href: "/" },
-  {
-    label: "About Us",
-    href: "/about-us",
-    children: [
-      { label: "About The Good News Mission", href: "/about-us" },
-      { label: "Our Faith", href: "/our-faith" },
-      { label: "Our Statutes", href: "/our-statutes" },
-      { label: "Our Strategic Plan", href: "/our-strategic-plan" },
-      { label: "Message From Our Pastor", href: "/message-from-our-pastor" },
-      { label: "Message From Our First Lady", href: "/message-from-our-first-lady" },
-      { label: "Our Leadership", href: "/our-leadership" },
-    ],
-  },
-  { label: "Ministries", href: "/ministries" },
-  { label: "Sermons", href: "/sermons" },
-  { label: "Events", href: "/events" },
-  { label: "Blog", href: "/blog" },
-  {
-    label: "Media",
-    href: "/gallery",
-    children: [
-      { label: "Announcements", href: "/announcements" },
-      { label: "Gallery", href: "/gallery" },
-      { label: "Videos", href: "/videos" },
-    ],
-  },
-  { label: "Resources", href: "/resources" },
-  { label: "Contact Us", href: "/contact-us" },
-];
+export function getMainNav(locale: Locale): NavItem[] {
+  const { nav } = getDictionary(locale);
+  const p = (path: string) => localePath(locale, path);
 
-export const footerQuickLinks = [
-  { label: "About Us", href: "/about-us" },
-  { label: "Our Faith", href: "/our-faith" },
-  { label: "Our Leadership", href: "/our-leadership" },
-  { label: "Sermons", href: "/sermons" },
-  { label: "Events", href: "/events" },
-  { label: "Blog", href: "/blog" },
-  { label: "Contact Us", href: "/contact-us" },
-];
+  return [
+    { label: nav.home, href: p("/") },
+    {
+      label: nav.about,
+      href: p("/about-us"),
+      children: [
+        { label: nav.aboutChurch, href: p("/about-us") },
+        { label: nav.faith, href: p("/our-faith") },
+        { label: nav.statutes, href: p("/our-statutes") },
+        { label: nav.strategicPlan, href: p("/our-strategic-plan") },
+        { label: nav.pastorMessage, href: p("/message-from-our-pastor") },
+        { label: nav.firstLadyMessage, href: p("/message-from-our-first-lady") },
+        { label: nav.leadership, href: p("/our-leadership") },
+      ],
+    },
+    { label: nav.planVisit, href: p("/plan-your-visit") },
+    { label: nav.ministries, href: p("/ministries") },
+    { label: nav.sermons, href: p("/sermons") },
+    { label: nav.events, href: p("/events") },
+    { label: nav.blog, href: p("/blog") },
+    {
+      label: nav.media,
+      href: p("/gallery"),
+      children: [
+        { label: nav.announcements, href: p("/announcements") },
+        { label: nav.gallery, href: p("/gallery") },
+        { label: nav.videos, href: p("/videos") },
+      ],
+    },
+    { label: nav.resources, href: p("/resources") },
+    { label: nav.contact, href: p("/contact-us") },
+  ];
+}
+
+export function getFooterLinks(locale: Locale) {
+  const { nav } = getDictionary(locale);
+  const p = (path: string) => localePath(locale, path);
+  return [
+    { label: nav.planVisit, href: p("/plan-your-visit") },
+    { label: nav.aboutChurch, href: p("/about-us") },
+    { label: nav.faith, href: p("/our-faith") },
+    { label: nav.leadership, href: p("/our-leadership") },
+    { label: nav.sermons, href: p("/sermons") },
+    { label: nav.events, href: p("/events") },
+    { label: nav.blog, href: p("/blog") },
+    { label: nav.contact, href: p("/contact-us") },
+  ];
+}

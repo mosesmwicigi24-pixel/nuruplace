@@ -1,7 +1,8 @@
 import { ImageResponse } from "next/og";
-import { site } from "@/content/site";
+import { site, tagline } from "@/content/site";
+import { defaultLocale } from "@/i18n/config";
 
-export const alt = `${site.name} — ${site.tagline}`;
+export const alt = `${site.name} — ${tagline[defaultLocale]}`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -38,7 +39,7 @@ export default function OpengraphImage() {
           >
             ✝
           </div>
-          <div style={{ fontSize: 30, color: "#9ea6ff" }}>{site.tagline}</div>
+          <div style={{ fontSize: 30, color: "#9ea6ff" }}>{tagline[defaultLocale]}</div>
         </div>
         <div
           style={{

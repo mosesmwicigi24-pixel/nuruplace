@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { StaticPage } from "@/content/pages";
+import { t } from "@/content/localized";
+import type { Locale } from "@/i18n/config";
 
 /** Banner at the top of every inner page. */
 export function PageHero({
@@ -90,12 +92,7 @@ export function Button({
 
   if (external) {
     return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={classes}
-      >
+      <a href={href} target="_blank" rel="noopener noreferrer" className={classes}>
         {children}
       </a>
     );
@@ -109,24 +106,31 @@ export function Button({
 }
 
 /** Renders a StaticPage from src/content/pages.ts as article prose. */
-export function StaticPageBody({ page }: { page: StaticPage }) {
+export function StaticPageBody({
+  page,
+  locale,
+}: {
+  page: StaticPage;
+  locale: Locale;
+}) {
   return (
     <article className="mx-auto max-w-3xl px-6 py-16">
       {page.sections.map((section, i) => (
         <section key={i} className={i > 0 ? "mt-12" : undefined}>
           {section.heading && (
             <h2 className="text-xl font-extrabold tracking-tight text-ink-900 sm:text-2xl">
-              {section.heading}
+              {t(section.heading, locale)}
             </h2>
           )}
-          {section.paragraphs?.map((p, j) => (
-            <p key={j} className="mt-4 leading-relaxed text-ink-700">
-              {p}
-            </p>
-          ))}
+          {section.paragraphs &&
+            t(section.paragraphs, locale).map((p, j) => (
+              <p key={j} className="mt-4 leading-relaxed text-ink-700">
+                {p}
+              </p>
+            ))}
           {section.bullets && (
             <ul className="mt-4 space-y-3">
-              {section.bullets.map((b, j) => (
+              {t(section.bullets, locale).map((b, j) => (
                 <li key={j} className="flex gap-3 leading-relaxed text-ink-700">
                   <span
                     className="mt-2 size-1.5 shrink-0 rounded-full bg-brand-600"

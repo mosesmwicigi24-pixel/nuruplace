@@ -3,10 +3,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { mainNav, site } from "@/content/site";
+import { getMainNav, site } from "@/content/site";
+import { getDictionary } from "@/i18n/dictionary";
+import type { Locale } from "@/i18n/config";
+import { LanguageSwitcher } from "./language-switcher";
 
-export function MobileNav() {
+export function MobileNav({ locale }: { locale: Locale }) {
   const [open, setOpen] = useState(false);
+  const nav = getMainNav(locale);
+  const dict = getDictionary(locale);
 
   return (
     <div className="xl:hidden">
@@ -15,7 +20,7 @@ export function MobileNav() {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls="mobile-menu"
-        aria-label={open ? "Close menu" : "Open menu"}
+        aria-label={open ? dict.common.closeMenu : dict.common.openMenu}
         className="grid size-10 place-items-center rounded-md border border-slate-200 text-ink-800"
       >
         {open ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -26,8 +31,9 @@ export function MobileNav() {
           id="mobile-menu"
           className="absolute inset-x-0 top-full max-h-[75vh] overflow-y-auto border-b border-slate-200 bg-white px-6 py-4 shadow-lg"
         >
+          <LanguageSwitcher locale={locale} className="mb-3 text-ink-700" />
           <ul className="space-y-1">
-            {mainNav.map((item) => (
+            {nav.map((item) => (
               <li key={item.label}>
                 <Link
                   href={item.href}
@@ -60,7 +66,7 @@ export function MobileNav() {
             rel="noopener noreferrer"
             className="mt-4 block rounded-full bg-accent-500 px-5 py-3 text-center font-bold text-white"
           >
-            Give
+            {dict.common.give}
           </a>
         </div>
       )}
