@@ -194,7 +194,7 @@ export default function HomePage() {
           <h2 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
             Send Your Gift Now!
           </h2>
-          <p className="mt-4 leading-relaxed text-white/90">
+          <p className="mt-4 leading-relaxed text-white">
             Your giving sends missionaries, feeds the hungry and carries the
             gospel to places we could never reach alone. Thank you for standing
             with us.

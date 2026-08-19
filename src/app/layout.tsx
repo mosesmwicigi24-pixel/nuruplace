@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Montserrat, Merienda } from "next/font/google";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { StructuredData } from "@/components/structured-data";
 import { site } from "@/content/site";
 import "./globals.css";
 
@@ -24,13 +25,19 @@ export const metadata: Metadata = {
     template: `%s | ${site.name}`,
   },
   description: site.description,
+  alternates: { canonical: "./" },
   openGraph: {
     title: `${site.name} — A Missionary Sending Church`,
     description: site.description,
     url: site.url,
     siteName: site.name,
     type: "website",
+    locale: "en_KE",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#060eff",
 };
 
 export default function RootLayout({
@@ -39,6 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${montserrat.variable} ${merienda.variable}`}>
       <body className="font-sans flex min-h-screen flex-col">
+        <StructuredData />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-brand-600 focus:px-4 focus:py-2 focus:text-white"
