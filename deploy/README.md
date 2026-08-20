@@ -76,13 +76,40 @@ identical from the error message:
 | Deploy timer racing you | `nuruplace-deploy.timer` is active | `systemctl stop` it first |
 | Leaked endpoint | stale container or `docker-proxy` | remove it |
 
-The second is the one worth understanding, because it is invisible after the
-fact and it is why trying a fresh port did not help. If
-`net.ipv4.ip_local_port_range` has been widened downward on this box, the
-kernel can hand out 3013 as the **source** port of an outbound connection —
-and a mail server makes a great many outbound connections. `bind()` then fails
-with EADDRINUSE, the connection closes a moment later, and by the time you
-look the port is free. Every port in the range is a coin flip. Reserve it:
+### It was the leaked `Created` container
+
+On this box it turned out to be the fourth: `port-doctor.sh` found
+`nuruplace_web  Created` still sitting there, while step 5 proved the daemon
+could publish a random high port perfectly well.
+
+**A container in `Created` state still holds its host-port reservation** in
+Docker's allocator. It has no socket, no `docker-proxy`, and no entry in `ss`
+or `lsof` — but the daemon will refuse to hand that port to anything else. And
+a container that fails to start is *left* in `Created` state, so every failed
+attempt leaves another one behind. That is the trap: the second attempt fails
+because of the first, the third because of the second, and picking a fresh port
+number never helps because the port was never the problem.
+
+Clear it and start again:
+
+```bash
+docker rm -f nuruplace_web
+docker network rm nuruplace_default 2>/dev/null
+docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d web
+```
+
+`scripts/box-deploy.sh` now does this by itself — if `up -d` fails with
+`address already in use` it removes the stale container and retries once. Only
+on that error; anything else still fails loudly.
+
+### If it really is the ephemeral range
+
+Worth knowing because it is invisible after the fact and looks identical. If
+`net.ipv4.ip_local_port_range` has been widened downward, the kernel can hand
+out the port as the **source** port of an outbound connection — and a mail
+server makes a great many outbound connections. `bind()` fails with EADDRINUSE,
+the connection closes a moment later, and by the time you look the port is
+free. Every port in the range is a coin flip. Reserve it:
 
 ```bash
 sudo sysctl -w net.ipv4.ip_local_reserved_ports=3013
@@ -90,12 +117,11 @@ echo 'net.ipv4.ip_local_reserved_ports = 3013' \
   | sudo tee /etc/sysctl.d/60-nuruplace-port.conf
 ```
 
-That takes effect immediately, survives reboot, and does not touch the mail
-server or the Docker daemon.
+Immediate, survives reboot, touches neither the mail server nor Docker.
 
-**Do not restart the Docker daemon to clear this.** The church's mail server
-runs in Docker on this box — ports 25, 110, 143, 465, 587, 993, 995 and 4190.
-A restart to fix a website takes the church's email down with it.
+**Do not restart the Docker daemon to clear any of this.** The church's mail
+server runs in Docker on this box — ports 25, 110, 143, 465, 587, 993, 995 and
+4190. A restart to fix a website takes the church's email down with it.
 
 ### Last resort: no host port at all
 

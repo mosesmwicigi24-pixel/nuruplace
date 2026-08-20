@@ -74,7 +74,28 @@ if [ "$LOCAL" = "$REMOTE" ] && [ "$BEFORE" = "$AFTER" ]; then
 fi
 
 echo "$(date -Is) deploying ${REMOTE:0:8} (image $BEFORE -> $AFTER)"
-"${COMPOSE[@]}" up -d --no-deps web
+
+# A container that fails to start is left in `Created` state, and a created
+# container still holds its host-port reservation in Docker's allocator — with
+# no socket, no docker-proxy and nothing for `ss` or `lsof` to see. The next
+# attempt is then refused with "address already in use" for a port that
+# genuinely is free, and stays refused no matter which port you pick, because
+# every attempt leaves another one behind.
+#
+# So: clear the corpse and retry, once. Only on that specific error — anything
+# else fails loudly rather than being retried blind.
+ERR=$(mktemp)
+trap 'rm -f "$ERR"' EXIT
+if ! "${COMPOSE[@]}" up -d --no-deps web 2>"$ERR"; then
+  cat "$ERR" >&2
+  if grep -qi 'address already in use' "$ERR"; then
+    echo "$(date -Is) port bind refused; removing the stale container and retrying once" >&2
+    docker rm -f nuruplace_web >/dev/null 2>&1 || true
+    "${COMPOSE[@]}" up -d --no-deps web
+  else
+    exit 1
+  fi
+fi
 
 # 4. Health gate. /healthz answers 200 directly — it is deliberately excluded
 #    from the locale proxy, so a redirect can never fake a pass.
