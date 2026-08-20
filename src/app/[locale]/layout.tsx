@@ -46,8 +46,6 @@ export async function generateMetadata({
     description: description[locale],
     alternates: {
       canonical: "./",
-      // hreflang tells search engines these are the same page in two
-      // languages, so neither cannibalises the other's ranking.
       languages: Object.fromEntries(
         locales.map((l) => [localeTags[l], `/${l}`]),
       ),
@@ -78,16 +76,13 @@ export default async function LocaleLayout({ children, params }: Props) {
       lang={localeTags[locale as Locale]}
       className={`${montserrat.variable} ${merienda.variable}`}
     >
-      <body className="font-sans flex min-h-screen flex-col">
+      <body>
         <StructuredData locale={locale as Locale} />
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-brand-600 focus:px-4 focus:py-2 focus:text-white"
-        >
+        <a href="#main" className="sr-only skip-link">
           {dict.common.skipToContent}
         </a>
         <SiteHeader locale={locale as Locale} />
-        <main id="main" className="flex-1">
+        <main id="main" style={{ flex: 1 }}>
           {children}
         </main>
         <SiteFooter locale={locale as Locale} />

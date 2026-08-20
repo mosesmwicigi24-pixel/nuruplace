@@ -12,28 +12,28 @@ export function SiteFooter({ locale }: { locale: Locale }) {
   const links = getFooterLinks(locale);
 
   return (
-    <footer className="bg-ink-900 text-slate-300">
-      <div className="shell grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="site-footer">
+      <div className="shell grid-footer section">
         <div>
-          <div className="flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-full bg-brand-600 font-display text-lg text-white">
+          <div className="brandmark">
+            <span className="brandmark-glyph" aria-hidden>
               ✝
             </span>
-            <span className="font-bold text-white">{site.name}</span>
+            <span className="strong on-dark">{site.name}</span>
           </div>
-          <p className="mt-4 text-sm leading-relaxed">
+          <p className="t-small" style={{ marginTop: "var(--s-4)" }}>
             {locale === "sw"
               ? "Kanisa linalotuma wamisionari. Tunatamani kuonyesha upendo wa Kristo kwa watu wote kwa kushiriki Habari Njema ya Bwana wetu Yesu Kristo na kila mtu duniani kote."
               : "A missionary sending church. We desire to show the love of Christ to all people by sharing the Good News of our Lord Jesus Christ with every soul across the world."}
           </p>
-          <div className="mt-5 flex flex-wrap gap-3">
+          <div className="pill-row">
             {site.socials.map((s) => (
               <a
                 key={s.name}
                 href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-6 items-center rounded-full border border-white/20 px-3 py-1 text-xs hover:border-brand-400 hover:text-white"
+                className="pill"
               >
                 {s.name}
               </a>
@@ -42,13 +42,11 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         </div>
 
         <div>
-          <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-            {dict.common.quickLinks}
-          </h2>
-          <ul className="mt-4 space-y-2 text-sm">
+          <h2>{dict.common.quickLinks}</h2>
+          <ul className="footer-links">
             {links.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="inline-flex min-h-6 items-center hover:text-brand-300">
+                <Link href={l.href} className="link-quiet">
                   {l.label}
                 </Link>
               </li>
@@ -57,15 +55,13 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         </div>
 
         <div>
-          <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-            {dict.common.ourMinistries}
-          </h2>
-          <ul className="mt-4 space-y-2 text-sm">
+          <h2>{dict.common.ourMinistries}</h2>
+          <ul className="footer-links">
             {ministries.map((m) => (
               <li key={m.slug}>
                 <Link
                   href={localePath(locale, `/ministries/${m.slug}`)}
-                  className="inline-flex min-h-6 items-center hover:text-brand-300"
+                  className="link-quiet"
                 >
                   {t(m.name, locale)}
                 </Link>
@@ -75,29 +71,28 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         </div>
 
         <div>
-          <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-            {dict.common.contactUs}
-          </h2>
-          <ul className="mt-4 space-y-3 text-sm">
-            <li className="flex gap-3">
-              <MapPin className="mt-0.5 size-4 shrink-0 text-brand-400" aria-hidden />
+          <h2>{dict.common.contactUs}</h2>
+          <ul className="footer-meta">
+            <li>
+              <MapPin className="icon" aria-hidden />
               <span>
                 {site.contact.address}
                 <br />
                 {site.contact.city}
               </span>
             </li>
-            <li className="flex gap-3">
-              <Phone className="mt-0.5 size-4 shrink-0 text-brand-400" aria-hidden />
-              <a href={site.contact.phoneHref} className="inline-flex min-h-6 items-center hover:text-brand-300">
+            <li>
+              <Phone className="icon" aria-hidden />
+              <a href={site.contact.phoneHref} className="link-quiet">
                 {site.contact.phone}
               </a>
             </li>
-            <li className="flex gap-3">
-              <Mail className="mt-0.5 size-4 shrink-0 text-brand-400" aria-hidden />
+            <li>
+              <Mail className="icon" aria-hidden />
               <a
                 href={`mailto:${site.contact.email}`}
-                className="inline-flex min-h-6 items-center break-all hover:text-brand-300"
+                className="link-quiet"
+                style={{ overflowWrap: "anywhere" }}
               >
                 {site.contact.email}
               </a>
@@ -106,9 +101,11 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         </div>
       </div>
 
-      <div className="border-t border-white/10">
-        <div className="shell py-6 text-center text-xs">
-          &copy; {year} {site.name}. All rights reserved.
+      <div className="footer-base">
+        <div className="shell">
+          <p>
+            &copy; {year} {site.name}. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

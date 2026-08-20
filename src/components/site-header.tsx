@@ -11,34 +11,28 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   const dict = getDictionary(locale);
 
   return (
-    <header className="sticky top-0 z-40">
-      <div className="hidden bg-ink-900 text-white lg:block">
-        <div className="shell flex items-center justify-between gap-6 py-2 text-xs">
-          <div className="flex items-center gap-6">
-            <a
-              href={`mailto:${site.contact.email}`}
-              className="inline-flex min-h-6 items-center gap-2 hover:text-brand-300"
-            >
-              <Mail className="size-3.5" aria-hidden />
+    <header className="site-header">
+      <div className="topbar">
+        <div className="shell topbar-inner">
+          <div className="topbar-group">
+            <a href={`mailto:${site.contact.email}`} className="link-quiet">
+              <Mail className="icon-sm" aria-hidden />
               {site.contact.email}
             </a>
-            <a
-              href={site.contact.phoneHref}
-              className="inline-flex min-h-6 items-center gap-2 hover:text-brand-300"
-            >
-              <Phone className="size-3.5" aria-hidden />
+            <a href={site.contact.phoneHref} className="link-quiet">
+              <Phone className="icon-sm" aria-hidden />
               {site.contact.phone}
             </a>
           </div>
-          <div className="flex items-center gap-4">
-            <LanguageSwitcher locale={locale} className="text-white" />
+          <div className="topbar-group">
+            <LanguageSwitcher locale={locale} />
             {site.socials.map((s) => (
               <a
                 key={s.name}
                 href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-6 items-center hover:text-brand-300"
+                className="link-quiet"
               >
                 {s.name}
               </a>
@@ -47,40 +41,30 @@ export function SiteHeader({ locale }: { locale: Locale }) {
         </div>
       </div>
 
-      <div className="border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="shell flex items-center justify-between gap-4 py-4">
-          <Link href={localePath(locale, "/")} className="flex items-center gap-3">
-            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand-600 font-display text-lg text-white">
+      <div className="header-main">
+        <div className="shell header-inner">
+          <Link href={localePath(locale, "/")} className="brandmark">
+            <span className="brandmark-glyph" aria-hidden>
               ✝
             </span>
-            <span className="leading-tight">
-              <span className="block text-sm font-bold tracking-tight text-ink-900 sm:text-base">
-                {site.name}
-              </span>
-              <span className="block text-[11px] text-brand-700">
-                {tagline[locale]}
-              </span>
+            <span>
+              <span className="brandmark-name">{site.name}</span>
+              <span className="brandmark-tag">{tagline[locale]}</span>
             </span>
           </Link>
 
-          <nav aria-label="Main" className="hidden xl:block">
-            <ul className="flex items-center gap-0.5">
+          <nav aria-label="Main" className="nav">
+            <ul className="nav-list">
               {nav.map((item) => (
-                <li key={item.label} className="group relative">
-                  <Link
-                    href={item.href}
-                    className="inline-block rounded-md px-2.5 py-2 text-[13px] font-semibold text-ink-800 transition-colors hover:bg-brand-50 hover:text-brand-700"
-                  >
+                <li key={item.label} className="nav-item">
+                  <Link href={item.href} className="nav-link">
                     {item.label}
                   </Link>
                   {item.children && (
-                    <ul className="invisible absolute left-0 top-full z-50 w-72 rounded-lg border border-slate-200 bg-white py-2 opacity-0 shadow-lg transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                    <ul className="nav-sub">
                       {item.children.map((child) => (
                         <li key={child.href}>
-                          <Link
-                            href={child.href}
-                            className="block px-4 py-2 text-sm text-ink-700 hover:bg-brand-50 hover:text-brand-700"
-                          >
+                          <Link href={child.href} className="nav-sub-link">
                             {child.label}
                           </Link>
                         </li>
@@ -92,12 +76,12 @@ export function SiteHeader({ locale }: { locale: Locale }) {
             </ul>
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="header-actions">
             <a
               href={site.giving.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden rounded-full bg-accent-500 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-accent-600 sm:inline-block"
+              className="btn btn-accent btn-give"
             >
               {dict.common.give}
             </a>

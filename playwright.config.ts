@@ -20,16 +20,19 @@ export default defineConfig({
   reporter: process.env.CI ? [["github"], ["list"]] : [["list"]],
   use: {
     ...devices["Desktop Chrome"],
-    baseURL: process.env.BASE_URL ?? "http://127.0.0.1:3000",
+    baseURL: process.env.BASE_URL ?? "http://127.0.0.1:3100",
     trace: "on-first-retry",
     launchOptions: { executablePath },
   },
   webServer: process.env.BASE_URL
     ? undefined
     : {
-        command: "npm run build && npm run start",
-        url: "http://127.0.0.1:3000/en",
-        reuseExistingServer: !process.env.CI,
-        timeout: 180_000,
+        command: "npm run build && npm run start -- --port 3100",
+        url: "http://127.0.0.1:3100/en",
+        // Never reuse: a server left running from an earlier build serves stale
+        // HTML against a fresh .next, which produces failures that look like
+        // real regressions and are not. The suite has to tell the truth.
+        reuseExistingServer: false,
+        timeout: 240_000,
       },
 });

@@ -37,15 +37,15 @@ export default async function MinistryPage({ params }: Props) {
         title={t(ministry.name, locale)}
         subtitle={t(ministry.summary, locale)}
       />
-      <article className="measure section-y">
+      <article className="measure section prose">
         {t(ministry.body, locale).map((p, i) => (
-          <p key={i} className="mt-4 leading-relaxed text-ink-700">
+          <p key={i} className="t-body">
             {p}
           </p>
         ))}
         <Link
           href={localePath(locale, "/ministries")}
-          className="mt-10 inline-flex min-h-6 items-center font-bold text-brand-600 hover:text-brand-700"
+          className="link link-back"
         >
           ← {dict.common.allMinistries}
         </Link>

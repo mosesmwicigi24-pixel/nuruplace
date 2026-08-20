@@ -9,9 +9,6 @@ import type { ChurchEvent } from "@/content/events";
 import type { Sermon } from "@/content/sermons";
 import type { Post } from "@/content/posts";
 
-const cardBase =
-  "flex h-full flex-col rounded-xl border border-slate-200 bg-white p-6 transition-shadow hover:shadow-lg";
-
 export function MinistryCard({
   ministry,
   locale,
@@ -22,19 +19,12 @@ export function MinistryCard({
   const dict = getDictionary(locale);
   const href = localePath(locale, `/ministries/${ministry.slug}`);
   return (
-    <article className={cardBase}>
-      <h3 className="t-card font-bold text-ink-900">
-        <Link href={href} className="inline-flex min-h-6 items-center hover:text-brand-700">
-          {t(ministry.name, locale)}
-        </Link>
+    <article className="card">
+      <h3 className="t-card card-title">
+        <Link href={href}>{t(ministry.name, locale)}</Link>
       </h3>
-      <p className="t-body mt-3 flex-1 leading-relaxed text-ink-700">
-        {t(ministry.summary, locale)}
-      </p>
-      <Link
-        href={href}
-        className="mt-4 inline-flex min-h-6 items-center text-sm font-bold text-brand-600 hover:text-brand-700"
-      >
+      <p className="t-body card-body">{t(ministry.summary, locale)}</p>
+      <Link href={href} className="link t-small" style={{ marginTop: "var(--s-4)" }}>
         {dict.common.readMore} →
       </Link>
     </article>
@@ -50,26 +40,24 @@ export function EventCard({
 }) {
   const dict = getDictionary(locale);
   return (
-    <article className={cardBase}>
-      <h3 className="t-card font-bold text-ink-900">{t(event.title, locale)}</h3>
-      <dl className="mt-3 space-y-1.5 text-sm text-ink-700">
-        <div className="flex items-center gap-2">
-          <CalendarDays className="size-4 shrink-0 text-brand-600" aria-hidden />
+    <article className="card">
+      <h3 className="t-card card-title">{t(event.title, locale)}</h3>
+      <dl className="card-meta">
+        <div>
+          <CalendarDays className="icon" aria-hidden />
           <dt className="sr-only">{dict.common.date}</dt>
           <dd>
             <time dateTime={event.date}>{formatDate(event.date, locale)}</time> ·{" "}
             {event.timeLabel}
           </dd>
         </div>
-        <div className="flex items-center gap-2">
-          <MapPin className="size-4 shrink-0 text-brand-600" aria-hidden />
+        <div>
+          <MapPin className="icon" aria-hidden />
           <dt className="sr-only">{dict.common.location}</dt>
           <dd>{event.location}</dd>
         </div>
       </dl>
-      <p className="t-body mt-3 flex-1 leading-relaxed text-ink-700">
-        {t(event.summary, locale)}
-      </p>
+      <p className="t-body card-body">{t(event.summary, locale)}</p>
     </article>
   );
 }
@@ -83,28 +71,24 @@ export function SermonCard({
 }) {
   const dict = getDictionary(locale);
   return (
-    <article className={cardBase}>
-      <h3 className="t-card font-bold text-ink-900">{t(sermon.title, locale)}</h3>
-      <dl className="mt-3 space-y-1.5 text-sm text-ink-700">
-        <div className="flex items-center gap-2">
-          <Mic className="size-4 shrink-0 text-brand-600" aria-hidden />
+    <article className="card">
+      <h3 className="t-card card-title">{t(sermon.title, locale)}</h3>
+      <dl className="card-meta">
+        <div>
+          <Mic className="icon" aria-hidden />
           <dt className="sr-only">{dict.common.speaker}</dt>
           <dd>{t(sermon.speaker, locale)}</dd>
         </div>
-        <div className="flex items-center gap-2">
-          <CalendarDays className="size-4 shrink-0 text-brand-600" aria-hidden />
+        <div>
+          <CalendarDays className="icon" aria-hidden />
           <dt className="sr-only">{dict.common.date}</dt>
           <dd>
             <time dateTime={sermon.date}>{formatDate(sermon.date, locale)}</time>
           </dd>
         </div>
       </dl>
-      {sermon.scripture && (
-        <p className="mt-3 font-display text-brand-700">{sermon.scripture}</p>
-      )}
-      <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-700">
-        {t(sermon.summary, locale)}
-      </p>
+      {sermon.scripture && <p className="card-scripture">{sermon.scripture}</p>}
+      <p className="t-body card-body">{t(sermon.summary, locale)}</p>
     </article>
   );
 }
@@ -113,22 +97,15 @@ export function PostCard({ post, locale }: { post: Post; locale: Locale }) {
   const dict = getDictionary(locale);
   const href = localePath(locale, `/blog/${post.slug}`);
   return (
-    <article className={cardBase}>
-      <p className="text-xs font-bold uppercase tracking-wider text-brand-600">
+    <article className="card">
+      <p className="label card-date">
         <time dateTime={post.date}>{formatDate(post.date, locale)}</time>
       </p>
-      <h3 className="mt-2 text-lg font-bold text-ink-900">
-        <Link href={href} className="inline-flex min-h-6 items-center hover:text-brand-700">
-          {t(post.title, locale)}
-        </Link>
+      <h3 className="t-card card-title">
+        <Link href={href}>{t(post.title, locale)}</Link>
       </h3>
-      <p className="t-body mt-3 flex-1 leading-relaxed text-ink-700">
-        {t(post.excerpt, locale)}
-      </p>
-      <Link
-        href={href}
-        className="mt-4 inline-flex min-h-6 items-center text-sm font-bold text-brand-600 hover:text-brand-700"
-      >
+      <p className="t-body card-body">{t(post.excerpt, locale)}</p>
+      <Link href={href} className="link t-small" style={{ marginTop: "var(--s-4)" }}>
         {dict.common.continueReading} →
       </Link>
     </article>

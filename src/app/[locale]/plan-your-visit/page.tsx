@@ -31,14 +31,12 @@ export default async function PlanYourVisitPage({ params }: Props) {
       <PageHero title={dict.nav.planVisit} subtitle={t(visitIntro, locale)} />
 
       {/* The four facts someone needs before deciding to come at all. */}
-      <section className="border-b border-slate-200 bg-brand-50">
-        <dl className="shell grid gap-6 py-10 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="bg-wash" style={{ borderBottom: "1px solid var(--line)" }}>
+        <dl className="shell grid-facts section-sm">
           {visitFacts.map((fact) => (
             <div key={t(fact.label, "en")}>
-              <dt className="text-xs font-bold uppercase tracking-wider text-brand-700">
-                {t(fact.label, locale)}
-              </dt>
-              <dd className="mt-1 text-lg font-bold text-ink-900">
+              <dt className="label">{t(fact.label, locale)}</dt>
+              <dd className="t-sub strong" style={{ marginTop: "var(--s-1)" }}>
                 {t(fact.value, locale)}
               </dd>
             </div>
@@ -46,16 +44,14 @@ export default async function PlanYourVisitPage({ params }: Props) {
         </dl>
       </section>
 
-      <div className="shell grid gap-12 py-16 lg:grid-cols-[minmax(0,1fr)_380px] 2xl:grid-cols-[minmax(0,1fr)_440px]">
+      <div className="shell grid-aside section">
         <div>
-          <div className="space-y-10">
+          <div className="flow-lg">
             {visitQuestions.map((q, i) => (
               <section key={i}>
-                <h2 className="text-xl font-extrabold tracking-tight text-ink-900">
-                  {t(q.question, locale)}
-                </h2>
+                <h2 className="t-sub">{t(q.question, locale)}</h2>
                 {t(q.answer, locale).map((para, j) => (
-                  <p key={j} className="mt-3 leading-relaxed text-ink-700">
+                  <p key={j} className="t-body" style={{ marginTop: "var(--s-3)" }}>
                     {para}
                   </p>
                 ))}
@@ -63,59 +59,60 @@ export default async function PlanYourVisitPage({ params }: Props) {
             ))}
           </div>
 
-          <section className="mt-14 rounded-xl border border-slate-200 bg-slate-50 p-6">
-            <h2 className="text-lg font-extrabold tracking-tight text-ink-900">
+          <section className="card-panel" style={{ marginTop: "var(--s-16)", borderColor: "var(--line)", background: "var(--surface-sunk)" }}>
+            <h2 className="t-sub">
               {locale === "sw" ? "Ratiba ya Jumapili" : "Sunday at a glance"}
             </h2>
-            <ul className="mt-4 divide-y divide-slate-200 border-y border-slate-200">
+            <ul className="list-divided" style={{ marginTop: "var(--s-4)" }}>
               {sundayServices.map((s) => (
-                <li key={t(s.name, "en")} className="flex justify-between gap-4 py-3">
-                  <span className="font-semibold text-ink-900">
-                    {t(s.name, locale)}
-                  </span>
-                  <span className="text-right text-sm text-ink-700">
+                <li key={t(s.name, "en")} className="list-split">
+                  <span className="strong">{t(s.name, locale)}</span>
+                  <span className="value">
                     {t(s.time, locale)}
                     {s.note && (
-                      <span className="block text-brand-700">{t(s.note, locale)}</span>
+                      <span style={{ display: "block", color: "var(--brand-700)" }}>
+                        {t(s.note, locale)}
+                      </span>
                     )}
                   </span>
                 </li>
               ))}
             </ul>
-            <div className="mt-5 space-y-2 text-sm">
-              <p className="flex gap-2 text-ink-700">
-                <MapPin className="mt-0.5 size-4 shrink-0 text-brand-600" aria-hidden />
-                {site.contact.address}, {site.contact.city}
+            <div className="flow" style={{ marginTop: "var(--s-5)" }}>
+              <p className="t-small row" style={{ alignItems: "flex-start" }}>
+                <MapPin className="icon" aria-hidden />
+                <span>
+                  {site.contact.address}, {site.contact.city}
+                </span>
               </p>
-              <p className="flex gap-2 text-ink-700">
-                <Clock className="mt-0.5 size-4 shrink-0 text-brand-600" aria-hidden />
-                {locale === "sw"
-                  ? "Fika dakika kumi mapema ukipenda kupata kiti bila haraka."
-                  : "Arrive ten minutes early if you would like to find a seat unhurried."}
+              <p className="t-small row" style={{ alignItems: "flex-start" }}>
+                <Clock className="icon" aria-hidden />
+                <span>
+                  {locale === "sw"
+                    ? "Fika dakika kumi mapema ukipenda kupata kiti bila haraka."
+                    : "Arrive ten minutes early if you would like to find a seat unhurried."}
+                </span>
               </p>
-              <p className="flex flex-wrap gap-x-3 gap-y-1 text-ink-700">
-                <a
-                  href={site.contact.phoneHref}
-                  className="inline-flex min-h-6 items-center gap-2 font-semibold text-brand-600 hover:text-brand-700"
-                >
-                  <Phone className="size-4" aria-hidden />
-                  {site.contact.phone}
+              <p className="row row-wrap">
+                <a href={site.contact.phoneHref} className="link t-small">
+                  <Phone className="icon" aria-hidden />
+                  <span style={{ marginLeft: "var(--s-2)" }}>{site.contact.phone}</span>
                 </a>
                 <a
                   href={site.contact.whatsappHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-6 items-center gap-2 font-semibold text-brand-600 hover:text-brand-700"
+                  className="link t-small"
                 >
-                  <MessageCircle className="size-4" aria-hidden />
-                  WhatsApp
+                  <MessageCircle className="icon" aria-hidden />
+                  <span style={{ marginLeft: "var(--s-2)" }}>WhatsApp</span>
                 </a>
               </p>
             </div>
           </section>
         </div>
 
-        <aside className="lg:sticky lg:top-32 lg:self-start">
+        <aside className="aside-sticky">
           <ConnectionCard locale={locale} kind="connection-card" />
         </aside>
       </div>

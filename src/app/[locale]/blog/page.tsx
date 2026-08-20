@@ -29,8 +29,8 @@ export default async function BlogPage({ params }: Props) {
             : "Reflections, teaching and testimonies from The Good News Mission."
         }
       />
-      <div className="shell section-y">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+      <div className="shell section">
+        <div className="grid-cards">
           {byDateDesc(posts).map((p) => (
             <PostCard key={p.slug} post={p} locale={locale} />
           ))}

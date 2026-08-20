@@ -13,15 +13,11 @@ export function PageHero({
   subtitle?: string;
 }) {
   return (
-    <section className="bg-ink-900 bg-[radial-gradient(ellipse_at_top_right,rgba(28,36,255,0.35),transparent_60%)]">
-      <div className="shell section-y">
-        <h1 className="t-page font-extrabold tracking-tight text-white">
-          {title}
-        </h1>
+    <section className="bg-hero-page">
+      <div className="shell page-hero">
+        <h1 className="t-page on-dark">{title}</h1>
         {subtitle && (
-          <p className="t-lead mt-4 max-w-[52ch] text-slate-300">
-            {subtitle}
-          </p>
+          <p className="t-lead page-hero-sub on-dark-soft">{subtitle}</p>
         )}
       </div>
     </section>
@@ -32,21 +28,15 @@ export function PageHero({
 export function SectionHeading({
   eyebrow,
   title,
-  className,
 }: {
   eyebrow?: string;
   title: string;
-  className?: string;
 }) {
   return (
-    <div className={cn("text-center", className)}>
-      {eyebrow && (
-        <p className="font-display text-brand-600 t-body">{eyebrow}</p>
-      )}
-      <h2 className="t-section mt-1 font-extrabold tracking-tight text-ink-900">
-        {title}
-      </h2>
-      <span className="mx-auto mt-4 block h-1 w-16 rounded-full bg-accent-500" />
+    <div className="section-heading">
+      {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+      <h2 className="t-section">{title}</h2>
+      <span className="rule" aria-hidden />
     </div>
   );
 }
@@ -60,12 +50,10 @@ export function Scripture({
   children: React.ReactNode;
 }) {
   return (
-    <figure className="mx-auto max-w-[46ch] text-center 2xl:max-w-[56ch]">
-      <blockquote className="t-quote font-display text-white">
-        “{children}”
-      </blockquote>
-      <figcaption className="mt-4 text-sm font-bold uppercase tracking-widest text-brand-300">
-        {reference}
+    <figure className="scripture">
+      <blockquote className="t-quote on-dark">“{children}”</blockquote>
+      <figcaption>
+        <cite>{reference}</cite>
       </figcaption>
     </figure>
   );
@@ -82,24 +70,18 @@ export function Button({
   variant?: "primary" | "accent" | "outline";
   external?: boolean;
 }) {
-  const classes = cn(
-    "inline-block rounded-full px-6 py-3 text-sm font-bold transition-colors",
-    variant === "primary" && "bg-brand-600 text-white hover:bg-brand-700",
-    variant === "accent" && "bg-accent-500 text-white hover:bg-accent-600",
-    variant === "outline" &&
-      "border-2 border-white text-white hover:bg-white hover:text-ink-900",
-  );
+  const className = cn("btn", `btn-${variant}`);
 
   if (external) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={classes}>
+      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
         {children}
       </a>
     );
   }
 
   return (
-    <Link href={href} className={classes}>
+    <Link href={href} className={className}>
       {children}
     </Link>
   );
@@ -114,28 +96,20 @@ export function StaticPageBody({
   locale: Locale;
 }) {
   return (
-    <article className="measure section-y">
+    <article className="measure section prose">
       {page.sections.map((section, i) => (
-        <section key={i} className={i > 0 ? "mt-12" : undefined}>
-          {section.heading && (
-            <h2 className="t-card font-extrabold tracking-tight text-ink-900">
-              {t(section.heading, locale)}
-            </h2>
-          )}
+        <section key={i}>
+          {section.heading && <h2>{t(section.heading, locale)}</h2>}
           {section.paragraphs &&
             t(section.paragraphs, locale).map((p, j) => (
-              <p key={j} className="t-body mt-4 leading-relaxed text-ink-700">
+              <p key={j} className="t-body">
                 {p}
               </p>
             ))}
           {section.bullets && (
-            <ul className="mt-4 space-y-3">
+            <ul className="bullets">
               {t(section.bullets, locale).map((b, j) => (
-                <li key={j} className="t-body flex gap-3 leading-relaxed text-ink-700">
-                  <span
-                    className="mt-2 size-1.5 shrink-0 rounded-full bg-brand-600"
-                    aria-hidden
-                  />
+                <li key={j} className="t-body">
                   <span>{b}</span>
                 </li>
               ))}
@@ -156,9 +130,11 @@ export function EmptyState({
   message: string;
 }) {
   return (
-    <div className="measure py-24 text-center">
-      <h2 className="text-xl font-bold text-ink-900">{title}</h2>
-      <p className="mt-3 leading-relaxed text-ink-700">{message}</p>
+    <div className="empty shell">
+      <h2 className="t-sub">{title}</h2>
+      <p className="t-body" style={{ marginTop: "var(--s-3)" }}>
+        {message}
+      </p>
     </div>
   );
 }

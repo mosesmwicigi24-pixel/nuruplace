@@ -28,39 +28,32 @@ export default async function LeadershipPage({ params }: Props) {
             : "The team God has entrusted with shepherding The Good News Mission."
         }
       />
-      <div className="shell section-y">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+      <div className="shell section">
+        <div className="grid-cards">
           {leadership.map((leader, i) => (
-            <article
-              key={i}
-              className="rounded-xl border border-slate-200 bg-white p-6"
-            >
-              <div
-                className="grid size-16 place-items-center rounded-full bg-brand-50 font-display text-2xl text-brand-600"
-                aria-hidden
-              >
+            <article key={i} className="card">
+              <div className="avatar" aria-hidden>
                 ✝
               </div>
-              <h2 className="mt-4 text-lg font-bold text-ink-900">{leader.name}</h2>
-              <p className="mt-1 text-sm font-bold text-brand-700">
+              <h2 className="t-card" style={{ marginTop: "var(--s-4)" }}>
+                {leader.name}
+              </h2>
+              <p className="label" style={{ marginTop: "var(--s-1)" }}>
                 {t(leader.role, locale)}
               </p>
               {leader.bio && (
-                <p className="mt-3 text-sm leading-relaxed text-ink-700">
+                <p className="t-body" style={{ marginTop: "var(--s-3)" }}>
                   {t(leader.bio, locale)}
                 </p>
               )}
             </article>
           ))}
         </div>
-        <p className="mt-12 rounded-lg border border-dashed border-slate-300 p-6 text-center text-sm text-ink-700">
+        <p className="notice">
           {locale === "sw"
             ? "Majina, picha na wasifu bado hazijatolewa. Zibadilishe katika "
             : "Names, photographs and biographies have not been supplied yet. Update them in "}
-          <code className="rounded bg-slate-100 px-1.5 py-0.5">
-            src/content/leadership.ts
-          </code>
-          .
+          <code>src/content/leadership.ts</code>.
         </p>
       </div>
     </>

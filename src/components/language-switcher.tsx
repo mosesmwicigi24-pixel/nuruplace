@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Languages } from "lucide-react";
 import { locales, localeNames, localeTags, type Locale } from "@/i18n/config";
-import { cn } from "@/lib/utils";
 
 /**
  * Plain links rather than buttons: they work without JavaScript, they are
@@ -12,19 +11,13 @@ import { cn } from "@/lib/utils";
  * The choice is remembered server-side — src/proxy.ts writes the cookie when
  * it sees an explicit locale path.
  */
-export function LanguageSwitcher({
-  locale,
-  className,
-}: {
-  locale: Locale;
-  className?: string;
-}) {
+export function LanguageSwitcher({ locale }: { locale: Locale }) {
   const pathname = usePathname();
   const rest = pathname.replace(/^\/[^/]+/, "");
 
   return (
-    <div className={cn("flex items-center gap-1", className)}>
-      <Languages className="size-4 shrink-0 opacity-70" aria-hidden />
+    <div className="lang">
+      <Languages className="icon-sm" aria-hidden />
       {locales.map((l) => (
         <Link
           key={l}
@@ -32,12 +25,7 @@ export function LanguageSwitcher({
           hrefLang={localeTags[l]}
           aria-current={l === locale ? "true" : undefined}
           lang={l}
-          className={cn(
-            "inline-flex min-h-6 items-center rounded px-1.5 py-0.5 text-xs font-semibold transition-colors",
-            l === locale
-              ? "underline underline-offset-2"
-              : "opacity-80 hover:opacity-100",
-          )}
+          className="lang-link"
         >
           {localeNames[l]}
         </Link>

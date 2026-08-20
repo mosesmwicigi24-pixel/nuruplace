@@ -35,13 +35,11 @@ export default async function EventsPage({ params }: Props) {
             : "Worship experiences, outreaches and gatherings. Everyone is welcome."
         }
       />
-      <div className="shell section-y">
+      <div className="shell section">
         {upcoming.length > 0 && (
           <section>
-            <h2 className="text-xl font-extrabold tracking-tight text-ink-900">
-              {dict.common.upcoming}
-            </h2>
-            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 2xl:grid-cols-4">
+            <h2 className="t-sub">{dict.common.upcoming}</h2>
+            <div className="grid-cards" style={{ marginTop: "var(--s-6)" }}>
               {upcoming.map((e) => (
                 <EventCard key={e.slug} event={e} locale={locale} />
               ))}
@@ -49,11 +47,9 @@ export default async function EventsPage({ params }: Props) {
           </section>
         )}
         {past.length > 0 && (
-          <section className={upcoming.length > 0 ? "mt-16" : undefined}>
-            <h2 className="text-xl font-extrabold tracking-tight text-ink-900">
-              {dict.common.past}
-            </h2>
-            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 2xl:grid-cols-4">
+          <section style={upcoming.length > 0 ? { marginTop: "var(--s-16)" } : undefined}>
+            <h2 className="t-sub">{dict.common.past}</h2>
+            <div className="grid-cards" style={{ marginTop: "var(--s-6)" }}>
               {past.map((e) => (
                 <EventCard key={e.slug} event={e} locale={locale} />
               ))}

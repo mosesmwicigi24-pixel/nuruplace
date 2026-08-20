@@ -3,8 +3,10 @@
 Website for [The Good News Mission](https://nuruplace.org), a missionary sending
 church on Kangundo Road, Saika Estate, Nairobi.
 
-Built with **Next.js 16** (App Router), **React 19**, **TypeScript** and
-**Tailwind CSS v4**. Bilingual: **English and Kiswahili**.
+Built with **Next.js 16.2.10** (App Router), **React 19.2.4** and **TypeScript**.
+Styling is **one hand-authored `globals.css`** — no Tailwind, no CSS-in-JS, no
+utility vocabulary to learn before you can change a colour. Bilingual:
+**English and Kiswahili**.
 
 ---
 
@@ -23,6 +25,7 @@ Other scripts:
 | `npm run build` | Production build |
 | `npm start` | Serve the production build |
 | `npm run lint` | ESLint |
+| `npm test` | Responsive + accessibility suite (builds and serves first) |
 
 ---
 
@@ -272,3 +275,33 @@ which they look wrong. Card grids go to four columns at 1536px and above.
 Wide screens were a real gap: the previous site put everything in a fixed
 centre column, so a 1920px display showed a 1280px website between two grey
 margins. Prose still stays narrow — that is readability, not neglect.
+
+---
+
+## Styling
+
+One file: `src/app/globals.css`. No framework.
+
+It is ordered so you can find things: **tokens → reset → layout primitives →
+typography → components**. Everything is plain CSS with custom properties, so
+changing the brand blue means editing `--brand-600` once, and adding a page
+means reusing `.shell`, `.section` and `.card` rather than remembering twelve
+utility classes.
+
+Two rules the stylesheet must not break, because `npm test` enforces them:
+
+- interactive targets are at least **24×24px** (`--tap`)
+- text on the accent red is **pure white** — 4.78:1, and softening it to
+  `rgba(255,255,255,0.9)` drops it to 4.11:1 and fails AA
+
+Class naming is semantic rather than utility: `.card`, `.nav-link`,
+`.list-divided`. A handful of single-purpose helpers (`.center`, `.muted`,
+`.sr-only`) exist where a class name for the concept would be worse than the
+property itself.
+
+### Why not Tailwind
+
+Nothing was wrong with it. But this site is a brochure with one interactive
+component, it will be maintained by whoever is around rather than by a
+front-end team, and plain CSS is the thing most likely to still be readable to
+that person in three years. It also removes three dependencies from the build.

@@ -1,9 +1,12 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
 import { localeTags, type Locale } from "@/i18n/config";
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+/**
+ * Joins class names, dropping anything falsy. This replaces clsx +
+ * tailwind-merge: with a hand-written stylesheet there are no conflicting
+ * utility classes to merge, so nine lines does the whole job.
+ */
+export function cn(...parts: (string | false | null | undefined)[]): string {
+  return parts.filter(Boolean).join(" ");
 }
 
 /** Formats an ISO date in the reader's language, e.g. "23 October 2022". */
