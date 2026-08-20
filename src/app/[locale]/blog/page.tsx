@@ -29,8 +29,8 @@ export default async function BlogPage({ params }: Props) {
             : "Reflections, teaching and testimonies from The Good News Mission."
         }
       />
-      <div className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="shell section-y">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {byDateDesc(posts).map((p) => (
             <PostCard key={p.slug} post={p} locale={locale} />
           ))}

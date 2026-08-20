@@ -153,11 +153,11 @@ function Field({
 
 function Check({ name, label }: { name: string; label: string }) {
   return (
-    <label className="flex items-start gap-2.5 text-sm text-ink-700">
+    <label className="flex cursor-pointer items-center gap-3 py-1 text-sm text-ink-700">
       <input
         type="checkbox"
         name={name}
-        className="mt-1 size-4 shrink-0 rounded border-slate-300 text-brand-600 focus:ring-brand-600"
+        className="mt-0.5 size-6 shrink-0 rounded border-slate-300 text-brand-600 focus:ring-brand-600"
       />
       <span>{label}</span>
     </label>

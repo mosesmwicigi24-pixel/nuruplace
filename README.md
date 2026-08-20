@@ -226,3 +226,49 @@ Keep it that way: run the audit before shipping visual changes.
 - [ ] Fill in leadership names, roles and portraits
 - [ ] Supply Our Statutes and the First Lady's message
 - [ ] Register with the ODPC and complete a data protection impact assessment before collecting anything — the form takes names, phone numbers and prayer requests, and Kenya's Data Protection Act treats religious belief as sensitive personal data
+
+---
+
+## Responsiveness, checked by machine
+
+Resizing a browser by hand catches the obvious breakages and misses the rest.
+`npm test` runs the real production build across **eleven viewports from 320px
+to 2560px**, in both languages, and fails on three things that actually reach
+users:
+
+- **Horizontal scroll.** Any page wider than its viewport fails, and the error
+  names the offending elements with their positions — so the fix is obvious
+  rather than a hunt.
+- **Tap targets under 24×24 px** (WCAG 2.5.8), on phone and tablet widths.
+  Inline links inside body text are exempt, as the spec allows.
+- **Accessibility violations** (axe-core, WCAG 2.1 A + AA) at a narrow and a
+  wide viewport, because reflow and focus-order bugs only appear at one.
+
+```bash
+npm test                 # everything
+npm run test:responsive  # layout only
+npm run test:a11y        # accessibility only
+```
+
+The suite builds and serves the production output itself — no dev server, so
+what it measures is what visitors get. GitHub Actions runs it on every push and
+pull request.
+
+320px is deliberately the floor. Low-end Androids are common in Nairobi, and
+they belong to exactly the people this church most wants to reach.
+
+### How the layout scales
+
+Two containers, doing two different jobs:
+
+| Class | Used for | Behaviour |
+|---|---|---|
+| `.shell` | Card grids, header, footer | Grows with the screen: 1280 → 1472 → 1696 → 1920px |
+| `.measure` | Running prose | Stays at ~72 characters, on purpose |
+
+Headings use `clamp()` rather than breakpoint jumps, so there is no width at
+which they look wrong. Card grids go to four columns at 1536px and above.
+
+Wide screens were a real gap: the previous site put everything in a fixed
+centre column, so a 1920px display showed a 1280px website between two grey
+margins. Prose still stays narrow — that is readability, not neglect.

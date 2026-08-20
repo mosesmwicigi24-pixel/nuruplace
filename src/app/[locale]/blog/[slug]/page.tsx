@@ -30,7 +30,7 @@ export default async function PostPage({ params }: Props) {
   return (
     <>
       <PageHero title={t(post.title, locale)} />
-      <article className="mx-auto max-w-3xl px-6 py-16">
+      <article className="measure section-y">
         <p className="text-sm text-ink-700">
           {dict.common.by} {post.author} ·{" "}
           <time dateTime={post.date}>{formatDate(post.date, locale)}</time>
@@ -42,7 +42,7 @@ export default async function PostPage({ params }: Props) {
         ))}
         <Link
           href={localePath(locale, "/blog")}
-          className="mt-10 inline-block font-bold text-brand-600 hover:text-brand-700"
+          className="mt-10 inline-flex min-h-6 items-center font-bold text-brand-600 hover:text-brand-700"
         >
           ← {dict.common.allArticles}
         </Link>

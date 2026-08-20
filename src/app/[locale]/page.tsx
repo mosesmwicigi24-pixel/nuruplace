@@ -47,12 +47,12 @@ export default async function HomePage({ params }: Props) {
             <div className="absolute inset-0 bg-ink-900/55" />
           </div>
         )}
-        <div className="relative mx-auto max-w-7xl px-6 py-24 text-center sm:py-32">
-          <p className="font-display text-xl text-brand-300">{tagline[locale]}</p>
-          <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-white sm:text-6xl">
+        <div className="shell relative py-24 text-center sm:py-32">
+          <p className="t-lead font-display text-brand-300">{tagline[locale]}</p>
+          <h1 className="t-hero mt-4 font-extrabold tracking-tight text-white">
             {home.heroTitle}
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
+          <p className="t-lead mx-auto mt-6 max-w-[56ch] text-slate-300">
             {home.heroBody}
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
@@ -64,8 +64,8 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      <section className="bg-brand-700 py-16">
-        <div className="mx-auto max-w-7xl px-6">
+      <section className="bg-brand-700 section-y">
+        <div className="shell">
           <Scripture reference="John 8:12">
             {locale === "sw"
               ? "Mimi ndimi nuru ya ulimwengu. Yeye anifualaye hatakwenda gizani kamwe, bali atakuwa na nuru ya uzima"
@@ -74,10 +74,10 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      <section className="py-20">
-        <div className="mx-auto max-w-3xl px-6 text-center">
+      <section className="section-y">
+        <div className="measure text-center">
           <SectionHeading eyebrow={home.welcomeEyebrow} title={home.welcomeTitle} />
-          <p className="mt-8 leading-relaxed text-ink-700">{home.welcomeBody}</p>
+          <p className="t-body mt-8 leading-relaxed text-ink-700">{home.welcomeBody}</p>
           <div className="mt-8">
             <Button href={p("/about-us")}>{common.learnMore}</Button>
           </div>
@@ -85,31 +85,31 @@ export default async function HomePage({ params }: Props) {
       </section>
 
       {andrew && (
-        <section className="bg-brand-50 py-20">
-          <div className="mx-auto grid max-w-7xl gap-10 px-6 lg:grid-cols-2 lg:items-center">
+        <section className="bg-brand-50 section-y">
+          <div className="shell grid gap-10 lg:grid-cols-2 lg:items-center">
             <div>
-              <p className="font-display text-lg text-brand-600">{home.andrewEyebrow}</p>
-              <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-ink-900 sm:text-3xl">
+              <p className="t-body font-display text-brand-600">{home.andrewEyebrow}</p>
+              <h2 className="t-section mt-1 font-extrabold tracking-tight text-ink-900">
                 {home.andrewTitle}
               </h2>
-              <p className="mt-5 leading-relaxed text-ink-700">{home.andrewBody1}</p>
-              <p className="mt-4 leading-relaxed text-ink-700">{home.andrewBody2}</p>
+              <p className="t-body mt-5 leading-relaxed text-ink-700">{home.andrewBody1}</p>
+              <p className="t-body mt-4 leading-relaxed text-ink-700">{home.andrewBody2}</p>
               <div className="mt-8">
                 <Button href={p(`/ministries/${andrew.slug}`)}>{home.andrewCta}</Button>
               </div>
             </div>
             <div className="rounded-2xl border border-brand-200 bg-white p-8">
-              <h3 className="text-lg font-bold text-ink-900">{home.soulsTitle}</h3>
-              <p className="mt-4 leading-relaxed text-ink-700">{home.soulsBody}</p>
+              <h3 className="t-card font-bold text-ink-900">{home.soulsTitle}</h3>
+              <p className="t-body mt-4 leading-relaxed text-ink-700">{home.soulsBody}</p>
             </div>
           </div>
         </section>
       )}
 
-      <section className="py-20">
-        <div className="mx-auto max-w-7xl px-6">
+      <section className="section-y">
+        <div className="shell">
           <SectionHeading eyebrow={home.ministriesEyebrow} title={home.ministriesTitle} />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {ministries.slice(0, 6).map((m) => (
               <MinistryCard key={m.slug} ministry={m} locale={locale} />
             ))}
@@ -120,8 +120,8 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      <section className="bg-ink-900 py-20">
-        <div className="mx-auto max-w-7xl px-6">
+      <section className="bg-ink-900 section-y">
+        <div className="shell">
           <Scripture reference="Matthew 11:28-30">
             {locale === "sw"
               ? "Njoni kwangu, ninyi nyote msumbukao na wenye kulemewa na mizigo, nami nitawapumzisha. Jitieni nira yangu, mjifunze kwangu; kwa kuwa mimi ni mpole na mnyenyekevu wa moyo; nanyi mtapata raha nafsini mwenu"
@@ -130,10 +130,10 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      <section className="py-20">
-        <div className="mx-auto max-w-7xl px-6">
+      <section className="section-y">
+        <div className="shell">
           <SectionHeading eyebrow={home.eventsEyebrow} title={home.eventsTitle} />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {latestEvents.map((e) => (
               <EventCard key={e.slug} event={e} locale={locale} />
             ))}
@@ -145,8 +145,8 @@ export default async function HomePage({ params }: Props) {
       </section>
 
       {latestSermon && (
-        <section className="bg-slate-50 py-20">
-          <div className="mx-auto max-w-3xl px-6">
+        <section className="bg-slate-50 section-y">
+          <div className="measure">
             <SectionHeading eyebrow={home.sermonEyebrow} title={home.sermonTitle} />
             <div className="mt-12">
               <SermonCard sermon={latestSermon} locale={locale} />
@@ -158,10 +158,10 @@ export default async function HomePage({ params }: Props) {
         </section>
       )}
 
-      <section className="py-20">
-        <div className="mx-auto max-w-7xl px-6">
+      <section className="section-y">
+        <div className="shell">
           <SectionHeading eyebrow={home.blogEyebrow} title={home.blogTitle} />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {latestPosts.map((post) => (
               <PostCard key={post.slug} post={post} locale={locale} />
             ))}
@@ -172,9 +172,9 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      <section className="bg-accent-500 py-20">
-        <div className="mx-auto max-w-3xl px-6 text-center">
-          <h2 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
+      <section className="bg-accent-500 section-y">
+        <div className="measure text-center">
+          <h2 className="t-section font-extrabold tracking-tight text-white">
             {home.givingTitle}
           </h2>
           <p className="mt-4 leading-relaxed text-white">{home.givingBody}</p>
@@ -189,8 +189,8 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>
 
-      <section className="py-20">
-        <div className="mx-auto max-w-5xl px-6">
+      <section className="section-y">
+        <div className="measure !max-w-5xl">
           <SectionHeading eyebrow={home.servicesEyebrow} title={home.servicesTitle} />
           <div className="mt-12 grid gap-8 sm:grid-cols-2">
             <div>

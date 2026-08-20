@@ -33,7 +33,7 @@ export function LanguageSwitcher({
           aria-current={l === locale ? "true" : undefined}
           lang={l}
           className={cn(
-            "rounded px-1.5 py-0.5 text-xs font-semibold transition-colors",
+            "inline-flex min-h-6 items-center rounded px-1.5 py-0.5 text-xs font-semibold transition-colors",
             l === locale
               ? "underline underline-offset-2"
               : "opacity-80 hover:opacity-100",

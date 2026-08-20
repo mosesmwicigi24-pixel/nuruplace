@@ -29,8 +29,8 @@ export default async function SermonsPage({ params }: Props) {
             : "Teaching from our Sunday gatherings. Listen, be encouraged, and share with someone who needs it."
         }
       />
-      <div className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="shell section-y">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {byDateDesc(sermons).map((s) => (
             <SermonCard key={s.slug} sermon={s} locale={locale} />
           ))}

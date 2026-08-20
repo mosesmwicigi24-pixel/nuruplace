@@ -35,13 +35,13 @@ export default async function EventsPage({ params }: Props) {
             : "Worship experiences, outreaches and gatherings. Everyone is welcome."
         }
       />
-      <div className="mx-auto max-w-7xl px-6 py-16">
+      <div className="shell section-y">
         {upcoming.length > 0 && (
           <section>
             <h2 className="text-xl font-extrabold tracking-tight text-ink-900">
               {dict.common.upcoming}
             </h2>
-            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 2xl:grid-cols-4">
               {upcoming.map((e) => (
                 <EventCard key={e.slug} event={e} locale={locale} />
               ))}
@@ -53,7 +53,7 @@ export default async function EventsPage({ params }: Props) {
             <h2 className="text-xl font-extrabold tracking-tight text-ink-900">
               {dict.common.past}
             </h2>
-            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 2xl:grid-cols-4">
               {past.map((e) => (
                 <EventCard key={e.slug} event={e} locale={locale} />
               ))}

@@ -32,7 +32,7 @@ export default async function PlanYourVisitPage({ params }: Props) {
 
       {/* The four facts someone needs before deciding to come at all. */}
       <section className="border-b border-slate-200 bg-brand-50">
-        <dl className="mx-auto grid max-w-7xl gap-6 px-6 py-10 sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="shell grid gap-6 py-10 sm:grid-cols-2 lg:grid-cols-4">
           {visitFacts.map((fact) => (
             <div key={t(fact.label, "en")}>
               <dt className="text-xs font-bold uppercase tracking-wider text-brand-700">
@@ -46,7 +46,7 @@ export default async function PlanYourVisitPage({ params }: Props) {
         </dl>
       </section>
 
-      <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 lg:grid-cols-[1fr_400px]">
+      <div className="shell grid gap-12 py-16 lg:grid-cols-[minmax(0,1fr)_380px] 2xl:grid-cols-[minmax(0,1fr)_440px]">
         <div>
           <div className="space-y-10">
             {visitQuestions.map((q, i) => (
@@ -96,7 +96,7 @@ export default async function PlanYourVisitPage({ params }: Props) {
               <p className="flex flex-wrap gap-x-3 gap-y-1 text-ink-700">
                 <a
                   href={site.contact.phoneHref}
-                  className="flex items-center gap-2 font-semibold text-brand-600 hover:text-brand-700"
+                  className="inline-flex min-h-6 items-center gap-2 font-semibold text-brand-600 hover:text-brand-700"
                 >
                   <Phone className="size-4" aria-hidden />
                   {site.contact.phone}
@@ -105,7 +105,7 @@ export default async function PlanYourVisitPage({ params }: Props) {
                   href={site.contact.whatsappHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 font-semibold text-brand-600 hover:text-brand-700"
+                  className="inline-flex min-h-6 items-center gap-2 font-semibold text-brand-600 hover:text-brand-700"
                 >
                   <MessageCircle className="size-4" aria-hidden />
                   WhatsApp

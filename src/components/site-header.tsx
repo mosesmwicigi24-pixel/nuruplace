@@ -13,18 +13,18 @@ export function SiteHeader({ locale }: { locale: Locale }) {
   return (
     <header className="sticky top-0 z-40">
       <div className="hidden bg-ink-900 text-white lg:block">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-2 text-xs">
+        <div className="shell flex items-center justify-between gap-6 py-2 text-xs">
           <div className="flex items-center gap-6">
             <a
               href={`mailto:${site.contact.email}`}
-              className="flex items-center gap-2 hover:text-brand-300"
+              className="inline-flex min-h-6 items-center gap-2 hover:text-brand-300"
             >
               <Mail className="size-3.5" aria-hidden />
               {site.contact.email}
             </a>
             <a
               href={site.contact.phoneHref}
-              className="flex items-center gap-2 hover:text-brand-300"
+              className="inline-flex min-h-6 items-center gap-2 hover:text-brand-300"
             >
               <Phone className="size-3.5" aria-hidden />
               {site.contact.phone}
@@ -38,7 +38,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
                 href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-brand-300"
+                className="inline-flex min-h-6 items-center hover:text-brand-300"
               >
                 {s.name}
               </a>
@@ -48,7 +48,7 @@ export function SiteHeader({ locale }: { locale: Locale }) {
       </div>
 
       <div className="border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-4">
+        <div className="shell flex items-center justify-between gap-4 py-4">
           <Link href={localePath(locale, "/")} className="flex items-center gap-3">
             <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand-600 font-display text-lg text-white">
               ✝

@@ -37,7 +37,7 @@ export default async function MinistryPage({ params }: Props) {
         title={t(ministry.name, locale)}
         subtitle={t(ministry.summary, locale)}
       />
-      <article className="mx-auto max-w-3xl px-6 py-16">
+      <article className="measure section-y">
         {t(ministry.body, locale).map((p, i) => (
           <p key={i} className="mt-4 leading-relaxed text-ink-700">
             {p}
@@ -45,7 +45,7 @@ export default async function MinistryPage({ params }: Props) {
         ))}
         <Link
           href={localePath(locale, "/ministries")}
-          className="mt-10 inline-block font-bold text-brand-600 hover:text-brand-700"
+          className="mt-10 inline-flex min-h-6 items-center font-bold text-brand-600 hover:text-brand-700"
         >
           ← {dict.common.allMinistries}
         </Link>

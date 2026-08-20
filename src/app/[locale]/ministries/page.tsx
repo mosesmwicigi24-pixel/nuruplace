@@ -29,8 +29,8 @@ export default async function MinistriesPage({ params }: Props) {
             : "There is a place for you to serve, grow and belong. Every department exists to help people meet Christ and become who God made them to be."
         }
       />
-      <div className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="shell section-y">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
           {ministries.map((m) => (
             <MinistryCard key={m.slug} ministry={m} locale={locale} />
           ))}

@@ -14,12 +14,12 @@ export function PageHero({
 }) {
   return (
     <section className="bg-ink-900 bg-[radial-gradient(ellipse_at_top_right,rgba(28,36,255,0.35),transparent_60%)]">
-      <div className="mx-auto max-w-7xl px-6 py-16 sm:py-20">
-        <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+      <div className="shell section-y">
+        <h1 className="t-page font-extrabold tracking-tight text-white">
           {title}
         </h1>
         {subtitle && (
-          <p className="mt-4 max-w-3xl text-base leading-relaxed text-slate-300">
+          <p className="t-lead mt-4 max-w-[52ch] text-slate-300">
             {subtitle}
           </p>
         )}
@@ -41,9 +41,9 @@ export function SectionHeading({
   return (
     <div className={cn("text-center", className)}>
       {eyebrow && (
-        <p className="font-display text-lg text-brand-600">{eyebrow}</p>
+        <p className="font-display text-brand-600 t-body">{eyebrow}</p>
       )}
-      <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-ink-900 sm:text-3xl">
+      <h2 className="t-section mt-1 font-extrabold tracking-tight text-ink-900">
         {title}
       </h2>
       <span className="mx-auto mt-4 block h-1 w-16 rounded-full bg-accent-500" />
@@ -60,8 +60,8 @@ export function Scripture({
   children: React.ReactNode;
 }) {
   return (
-    <figure className="mx-auto max-w-3xl text-center">
-      <blockquote className="font-display text-xl leading-relaxed text-white sm:text-2xl">
+    <figure className="mx-auto max-w-[46ch] text-center 2xl:max-w-[56ch]">
+      <blockquote className="t-quote font-display text-white">
         “{children}”
       </blockquote>
       <figcaption className="mt-4 text-sm font-bold uppercase tracking-widest text-brand-300">
@@ -114,24 +114,24 @@ export function StaticPageBody({
   locale: Locale;
 }) {
   return (
-    <article className="mx-auto max-w-3xl px-6 py-16">
+    <article className="measure section-y">
       {page.sections.map((section, i) => (
         <section key={i} className={i > 0 ? "mt-12" : undefined}>
           {section.heading && (
-            <h2 className="text-xl font-extrabold tracking-tight text-ink-900 sm:text-2xl">
+            <h2 className="t-card font-extrabold tracking-tight text-ink-900">
               {t(section.heading, locale)}
             </h2>
           )}
           {section.paragraphs &&
             t(section.paragraphs, locale).map((p, j) => (
-              <p key={j} className="mt-4 leading-relaxed text-ink-700">
+              <p key={j} className="t-body mt-4 leading-relaxed text-ink-700">
                 {p}
               </p>
             ))}
           {section.bullets && (
             <ul className="mt-4 space-y-3">
               {t(section.bullets, locale).map((b, j) => (
-                <li key={j} className="flex gap-3 leading-relaxed text-ink-700">
+                <li key={j} className="t-body flex gap-3 leading-relaxed text-ink-700">
                   <span
                     className="mt-2 size-1.5 shrink-0 rounded-full bg-brand-600"
                     aria-hidden
@@ -156,7 +156,7 @@ export function EmptyState({
   message: string;
 }) {
   return (
-    <div className="mx-auto max-w-2xl px-6 py-24 text-center">
+    <div className="measure py-24 text-center">
       <h2 className="text-xl font-bold text-ink-900">{title}</h2>
       <p className="mt-3 leading-relaxed text-ink-700">{message}</p>
     </div>

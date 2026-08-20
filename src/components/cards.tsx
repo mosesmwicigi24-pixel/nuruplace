@@ -23,17 +23,17 @@ export function MinistryCard({
   const href = localePath(locale, `/ministries/${ministry.slug}`);
   return (
     <article className={cardBase}>
-      <h3 className="text-lg font-bold text-ink-900">
-        <Link href={href} className="hover:text-brand-700">
+      <h3 className="t-card font-bold text-ink-900">
+        <Link href={href} className="inline-flex min-h-6 items-center hover:text-brand-700">
           {t(ministry.name, locale)}
         </Link>
       </h3>
-      <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-700">
+      <p className="t-body mt-3 flex-1 leading-relaxed text-ink-700">
         {t(ministry.summary, locale)}
       </p>
       <Link
         href={href}
-        className="mt-4 text-sm font-bold text-brand-600 hover:text-brand-700"
+        className="mt-4 inline-flex min-h-6 items-center text-sm font-bold text-brand-600 hover:text-brand-700"
       >
         {dict.common.readMore} →
       </Link>
@@ -51,7 +51,7 @@ export function EventCard({
   const dict = getDictionary(locale);
   return (
     <article className={cardBase}>
-      <h3 className="text-lg font-bold text-ink-900">{t(event.title, locale)}</h3>
+      <h3 className="t-card font-bold text-ink-900">{t(event.title, locale)}</h3>
       <dl className="mt-3 space-y-1.5 text-sm text-ink-700">
         <div className="flex items-center gap-2">
           <CalendarDays className="size-4 shrink-0 text-brand-600" aria-hidden />
@@ -67,7 +67,7 @@ export function EventCard({
           <dd>{event.location}</dd>
         </div>
       </dl>
-      <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-700">
+      <p className="t-body mt-3 flex-1 leading-relaxed text-ink-700">
         {t(event.summary, locale)}
       </p>
     </article>
@@ -84,7 +84,7 @@ export function SermonCard({
   const dict = getDictionary(locale);
   return (
     <article className={cardBase}>
-      <h3 className="text-lg font-bold text-ink-900">{t(sermon.title, locale)}</h3>
+      <h3 className="t-card font-bold text-ink-900">{t(sermon.title, locale)}</h3>
       <dl className="mt-3 space-y-1.5 text-sm text-ink-700">
         <div className="flex items-center gap-2">
           <Mic className="size-4 shrink-0 text-brand-600" aria-hidden />
@@ -118,16 +118,16 @@ export function PostCard({ post, locale }: { post: Post; locale: Locale }) {
         <time dateTime={post.date}>{formatDate(post.date, locale)}</time>
       </p>
       <h3 className="mt-2 text-lg font-bold text-ink-900">
-        <Link href={href} className="hover:text-brand-700">
+        <Link href={href} className="inline-flex min-h-6 items-center hover:text-brand-700">
           {t(post.title, locale)}
         </Link>
       </h3>
-      <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-700">
+      <p className="t-body mt-3 flex-1 leading-relaxed text-ink-700">
         {t(post.excerpt, locale)}
       </p>
       <Link
         href={href}
-        className="mt-4 text-sm font-bold text-brand-600 hover:text-brand-700"
+        className="mt-4 inline-flex min-h-6 items-center text-sm font-bold text-brand-600 hover:text-brand-700"
       >
         {dict.common.continueReading} →
       </Link>

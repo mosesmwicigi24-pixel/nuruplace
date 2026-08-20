@@ -32,7 +32,7 @@ export default async function ContactPage({ params }: Props) {
             : "We would love to hear from you. Come and visit, call, or send us a message."
         }
       />
-      <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 lg:grid-cols-2">
+      <div className="shell grid gap-12 py-16 lg:grid-cols-2">
         <div>
           <h2 className="text-xl font-extrabold tracking-tight text-ink-900">
             {locale === "sw" ? "Tupate wapi" : "Find us"}
@@ -56,7 +56,7 @@ export default async function ContactPage({ params }: Props) {
               <Phone className="mt-1 size-5 shrink-0 text-brand-600" aria-hidden />
               <div>
                 <p className="font-bold text-ink-900">{dict.common.phone}</p>
-                <a href={site.contact.phoneHref} className="text-brand-600 hover:text-brand-700">
+                <a href={site.contact.phoneHref} className="inline-flex min-h-6 items-center text-brand-600 hover:text-brand-700">
                   {site.contact.phone}
                 </a>
               </div>
@@ -69,7 +69,7 @@ export default async function ContactPage({ params }: Props) {
                   href={site.contact.whatsappHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-brand-600 hover:text-brand-700"
+                  className="inline-flex min-h-6 items-center text-brand-600 hover:text-brand-700"
                 >
                   {site.contact.phone}
                 </a>
@@ -81,7 +81,7 @@ export default async function ContactPage({ params }: Props) {
                 <p className="font-bold text-ink-900">{dict.common.email}</p>
                 <a
                   href={`mailto:${site.contact.email}`}
-                  className="break-all text-brand-600 hover:text-brand-700"
+                  className="inline-flex min-h-6 items-center break-all text-brand-600 hover:text-brand-700"
                 >
                   {site.contact.email}
                 </a>

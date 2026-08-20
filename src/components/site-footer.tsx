@@ -13,7 +13,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
 
   return (
     <footer className="bg-ink-900 text-slate-300">
-      <div className="mx-auto grid max-w-7xl gap-10 px-6 py-16 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="shell grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="flex items-center gap-3">
             <span className="grid size-10 place-items-center rounded-full bg-brand-600 font-display text-lg text-white">
@@ -33,7 +33,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
                 href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full border border-white/20 px-3 py-1 text-xs hover:border-brand-400 hover:text-white"
+                className="inline-flex min-h-6 items-center rounded-full border border-white/20 px-3 py-1 text-xs hover:border-brand-400 hover:text-white"
               >
                 {s.name}
               </a>
@@ -48,7 +48,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           <ul className="mt-4 space-y-2 text-sm">
             {links.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="hover:text-brand-300">
+                <Link href={l.href} className="inline-flex min-h-6 items-center hover:text-brand-300">
                   {l.label}
                 </Link>
               </li>
@@ -65,7 +65,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
               <li key={m.slug}>
                 <Link
                   href={localePath(locale, `/ministries/${m.slug}`)}
-                  className="hover:text-brand-300"
+                  className="inline-flex min-h-6 items-center hover:text-brand-300"
                 >
                   {t(m.name, locale)}
                 </Link>
@@ -89,7 +89,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
             </li>
             <li className="flex gap-3">
               <Phone className="mt-0.5 size-4 shrink-0 text-brand-400" aria-hidden />
-              <a href={site.contact.phoneHref} className="hover:text-brand-300">
+              <a href={site.contact.phoneHref} className="inline-flex min-h-6 items-center hover:text-brand-300">
                 {site.contact.phone}
               </a>
             </li>
@@ -97,7 +97,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
               <Mail className="mt-0.5 size-4 shrink-0 text-brand-400" aria-hidden />
               <a
                 href={`mailto:${site.contact.email}`}
-                className="break-all hover:text-brand-300"
+                className="inline-flex min-h-6 items-center break-all hover:text-brand-300"
               >
                 {site.contact.email}
               </a>
@@ -107,7 +107,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="mx-auto max-w-7xl px-6 py-6 text-center text-xs">
+        <div className="shell py-6 text-center text-xs">
           &copy; {year} {site.name}. All rights reserved.
         </div>
       </div>

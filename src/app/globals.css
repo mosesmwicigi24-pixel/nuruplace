@@ -27,6 +27,10 @@
   --color-accent-500: #dc2b0f;
   --color-accent-600: #b8220c;
 
+  /* Tailwind stops at 1536px. Plenty of people read this on more. */
+  --breakpoint-3xl: 120rem;   /* 1920px */
+  --breakpoint-4xl: 160rem;   /* 2560px */
+
   --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-merienda), Georgia, serif;
 }
@@ -47,3 +51,61 @@ body {
   outline-offset: 2px;
   border-radius: 2px;
 }
+
+/* ─── Layout scale ──────────────────────────────────────────────────────────
+   Two different jobs, so two different containers.
+
+   `.shell` holds structural content — card grids, headers, footers. It grows
+   with the screen so a 1920px display is not showing a 1280px website in the
+   middle of two grey margins.
+
+   `.measure` holds running prose. It deliberately does NOT grow: a line of
+   text past roughly 75 characters is measurably harder to read, so wide
+   screens get more whitespace here on purpose, not by neglect.
+*/
+.shell {
+  width: 100%;
+  margin-inline: auto;
+  /* Padding grows with the viewport instead of stepping at breakpoints. */
+  padding-inline: clamp(1.25rem, 3.5vw, 4rem);
+  max-width: 80rem;              /* 1280 — laptops */
+}
+
+@media (min-width: 1536px) {
+  .shell { max-width: 92rem; }   /* 1472 */
+}
+
+@media (min-width: 1920px) {
+  .shell { max-width: 106rem; }  /* 1696 */
+}
+
+@media (min-width: 2560px) {
+  .shell { max-width: 120rem; }  /* 1920 — stop here; beyond this it stops
+                                    reading as one page and starts reading as
+                                    a wall. */
+}
+
+.measure {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 3.5vw, 4rem);
+  max-width: 46rem;              /* ~72ch at this type size */
+}
+
+/* Vertical rhythm scales too — a section that breathes at 390px looks mean at
+   1920px, and one that breathes at 1920px wastes a phone screen. */
+.section-y {
+  padding-block: clamp(3.5rem, 6vw, 7rem);
+}
+
+/* ─── Fluid type ────────────────────────────────────────────────────────────
+   Headings interpolate between the phone size and the wide-screen size rather
+   than jumping at breakpoints, so there is no width at which they look wrong.
+*/
+.t-hero    { font-size: clamp(2.25rem, 1.2rem + 4.6vw, 5rem);      line-height: 1.04; }
+.t-page    { font-size: clamp(1.875rem, 1.4rem + 2.1vw, 3.5rem);   line-height: 1.1; }
+.t-quote   { font-size: clamp(1.1875rem, 1rem + 1.1vw, 2.125rem);  line-height: 1.45; }
+.t-section { font-size: clamp(1.5rem,  1.1rem + 1.7vw, 2.75rem);   line-height: 1.15; }
+.t-card    { font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.375rem);  line-height: 1.3; }
+.t-lead    { font-size: clamp(1rem, 0.95rem + 0.45vw, 1.3125rem);  line-height: 1.6; }
+.t-body    { font-size: clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem); }
