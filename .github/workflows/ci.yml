@@ -42,6 +42,16 @@ jobs:
         run: npm run lint
       - name: Typecheck
         run: npx tsc --noEmit
+
+      # Compose merges `ports` lists across -f files instead of replacing them,
+      # so an override that re-declares a mapping to narrow its bind address
+      # yields TWO bindings for one port. Docker then collides with itself and
+      # rolls the start back with "address already in use" — on every port,
+      # including untried ones, leaving nothing for ss or lsof to find. It cost
+      # days on the production box before anyone read the rendered config.
+      - name: Compose port bindings
+        run: ./scripts/check-compose.sh
+
       - name: Build
         run: npm run build
 
