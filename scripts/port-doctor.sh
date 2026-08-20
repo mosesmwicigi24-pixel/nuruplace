@@ -79,6 +79,7 @@ high=$(echo "$range" | awk '{print $2}')
 say "net.ipv4.ip_local_port_range     = $range   (default: 32768 60999)"
 say "net.ipv4.ip_local_reserved_ports = ${reserved:-<empty>}"
 if [ -n "$low" ] && [ "$PORT" -ge "$low" ] && [ "$PORT" -le "$high" ]; then
+  EPHEMERAL=yes
   verdict "$PORT IS INSIDE THE EPHEMERAL RANGE. This is almost certainly it."
   cat <<EOF
 
@@ -97,13 +98,14 @@ if [ -n "$low" ] && [ "$PORT" -ge "$low" ] && [ "$PORT" -le "$high" ]; then
    comma-separated, ranges allowed: 3000-3013,8080
 EOF
 else
+  EPHEMERAL=no
   say "$PORT is outside the ephemeral range — not cause 2"
 fi
 
 # ------------------------------------------------------------- 3. the timer
 hr "3. Is the deploy loop racing you?"
-t=$(systemctl is-active nuruplace-deploy.timer 2>/dev/null || echo unknown)
-s=$(systemctl is-active nuruplace-deploy.service 2>/dev/null || echo unknown)
+t=$(systemctl is-active nuruplace-deploy.timer 2>/dev/null); t=${t:-unknown}
+s=$(systemctl is-active nuruplace-deploy.service 2>/dev/null); s=${s:-unknown}
 say "nuruplace-deploy.timer   = $t"
 say "nuruplace-deploy.service = $s"
 if [ "$t" = "active" ] || [ "$s" = "activating" ] || [ "$s" = "active" ]; then
@@ -133,6 +135,29 @@ else
   else
     say "no docker-proxy on $PORT"
   fi
+
+  # Running but unpublished. This one is nastier than a hard failure because
+  # `docker ps` says "Up (healthy)" and means it — the app really is fine, the
+  # container's own healthcheck really does pass. It just cannot be reached
+  # from the host, so the deploy's health gate fails and the site is down while
+  # every surface-level check looks green.
+  state=$(docker inspect -f '{{.State.Running}}' nuruplace_web 2>/dev/null)
+  binds=$(docker inspect -f '{{json .HostConfig.PortBindings}}' nuruplace_web 2>/dev/null)
+  if [ "$state" = "true" ] && { [ "$binds" = "{}" ] || [ "$binds" = "null" ]; }; then
+    ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' \
+           nuruplace_web 2>/dev/null)
+    verdict "nuruplace_web is RUNNING but publishes NO host port."
+    say "The app is healthy; it is simply not reachable from the host, which is"
+    say "why the deploy's health gate fails while docker ps looks fine."
+    say ""
+    say "It is reachable on the bridge right now:"
+    say "  curl -s -o /dev/null -w '%{http_code}\\n' http://$ip:3000/healthz"
+    say ""
+    say "Either force a recreate so the port publishes:"
+    say "  docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d --force-recreate web"
+    say "...or keep it unpublished on purpose and point nginx at the bridge —"
+    say "that is what docker-compose.direct.yml is for. See deploy/README.md."
+  fi
 fi
 
 # ------------------------------------------------------ 5. control: can it?
@@ -157,7 +182,12 @@ else
   docker rm -f nuruplace_porttest >/dev/null 2>&1
   if [ $rc -eq 0 ]; then
     verdict "The daemon CAN publish ports. The problem is specific to $PORT."
-    say "Combined with step 2, that points at the ephemeral range."
+    if [ "${EPHEMERAL:-no}" = yes ]; then
+      say "Combined with step 2, that points at the ephemeral range."
+    else
+      say "Step 2 ruled out the ephemeral range, so see step 6 — it separates"
+      say "the port from the network, which this test does not."
+    fi
   elif printf '%s' "$err" | grep -qi 'address already in use'; then
     verdict "A throwaway container could not take $probe either."
     say "$err"

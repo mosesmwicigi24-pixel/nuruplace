@@ -97,6 +97,20 @@ if ! "${COMPOSE[@]}" up -d --no-deps web 2>"$ERR"; then
   fi
 fi
 
+# A container can come up RUNNING and pass its own healthcheck while
+# publishing no host port at all. That is worse than a hard failure: `docker
+# ps` says "Up (healthy)" and is telling the truth about the app, but nothing
+# on the host can reach it, so the site is down behind a green-looking deploy.
+# Only meaningful on the published-port path — the direct path publishes
+# nothing by design.
+if [ -z "$COMPOSE_FILES" ]; then
+  binds=$(docker inspect -f '{{json .HostConfig.PortBindings}}' nuruplace_web 2>/dev/null || echo null)
+  if [ "$binds" = "{}" ] || [ "$binds" = "null" ]; then
+    echo "$(date -Is) container is up but publishes no host port; forcing a recreate" >&2
+    "${COMPOSE[@]}" up -d --no-deps --force-recreate web
+  fi
+fi
+
 # 4. Health gate. /healthz answers 200 directly — it is deliberately excluded
 #    from the locale proxy, so a redirect can never fake a pass.
 for _ in $(seq 1 10); do
