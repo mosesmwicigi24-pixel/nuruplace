@@ -45,6 +45,21 @@ export type Dictionary = {
     comingSoon: string;
     notFound: string;
     notFoundBody: string;
+    close: string;
+    previous: string;
+    next: string;
+    play: string;
+    videoBlocked: string;
+    watchThere: string;
+    current: string;
+    earlier: string;
+    posted: string;
+    readNotice: string;
+    allNotices: string;
+    noPhotosYet: string;
+    noVideosYet: string;
+    download: string;
+    notReadyYet: string;
   };
   form: {
     heading: string;
@@ -153,6 +168,23 @@ const en: Dictionary = {
     sunday: "Sunday",
     duringWeek: "During the week",
     comingSoon: "Coming soon",
+    close: "Close",
+    previous: "Previous photo",
+    next: "Next photo",
+    play: "Play",
+    videoBlocked: "If the video will not load on your network,",
+    watchThere: "watch it on the provider's site",
+    current: "Current",
+    earlier: "Earlier notices",
+    posted: "Posted",
+    readNotice: "Read the full notice",
+    allNotices: "All announcements",
+    noPhotosYet:
+      "No photographs have been published in this album yet. They will appear here once the media team adds them.",
+    noVideosYet:
+      "No recordings have been published yet. Once the media team adds them, they will appear here — and nothing will load until you press play.",
+    download: "Download",
+    notReadyYet: "Not published yet",
     notFound: "We couldn't find that page",
     notFoundBody:
       "The page you are looking for may have moved or no longer exists.",
@@ -271,6 +303,23 @@ const sw: Dictionary = {
     sunday: "Jumapili",
     duringWeek: "Katikati ya wiki",
     comingSoon: "Inakuja hivi karibuni",
+    close: "Funga",
+    previous: "Picha iliyotangulia",
+    next: "Picha inayofuata",
+    play: "Cheza",
+    videoBlocked: "Kama video haitapakia kwenye mtandao wako,",
+    watchThere: "itazame kwenye tovuti ya mtoa huduma",
+    current: "Ya sasa",
+    earlier: "Matangazo ya awali",
+    posted: "Ilichapishwa",
+    readNotice: "Soma tangazo kamili",
+    allNotices: "Matangazo yote",
+    noPhotosYet:
+      "Hakuna picha zilizochapishwa katika albamu hii bado. Zitaonekana hapa timu ya vyombo vya habari itakapoziongeza.",
+    noVideosYet:
+      "Hakuna rekodi zilizochapishwa bado. Timu ya vyombo vya habari itakapoziongeza, zitaonekana hapa — na hakuna kitakachopakia hadi ubonyeze cheza.",
+    download: "Pakua",
+    notReadyYet: "Haijachapishwa bado",
     notFound: "Hatukuweza kupata ukurasa huo",
     notFoundBody:
       "Ukurasa unaoutafuta huenda umehamishwa au haupo tena.",

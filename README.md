@@ -121,21 +121,32 @@ This is a rebuild of nuruplace.org. The current live site runs on a PHP
 CodeIgniter CMS whose source is not available, so the structure, wording and
 brand colours were reproduced from the live pages.
 
-**Complete:** Home, About, Our Faith, Our Strategic Plan, Message From Our
-Pastor, Our Leadership, Ministries (listing + 7 detail pages), Sermons, Events,
-Blog (listing + articles), Contact, plus sitemap and robots.
+**Every page is built.** Home, Plan Your Visit, About, Our Faith, Our Statutes,
+Our Strategic Plan, both leadership messages, Our Leadership, Ministries
+(listing + 7 detail pages), Sermons, Events, Blog (listing + articles),
+Announcements (listing + notices), Gallery, Videos, Resources, Shop and
+Contact — in English and Kiswahili — plus sitemap, robots, manifest and share
+card.
 
-**Still needs real content:**
+**What is waiting on the church, not on code:**
 
-- `our-statutes` and `message-from-our-first-lady` — placeholder text in `pages.ts`
-- `our-leadership` — real names, roles and photographs
-- `announcements`, `gallery`, `videos`, `shop` — placeholder pages
-- Photography throughout. No images are bundled: the hero and cards use colour
-  and type rather than hotlinking assets from the live site. Drop photographs
-  into `public/` and reference them from the content files.
-- The contact page describes where a form would go but does not ship one — a
-  form needs a destination (an email service or a route handler) so submissions
-  are not silently lost.
+| Needs | Where it goes |
+|---|---|
+| Statutes text, First Lady's message | `pages.ts` |
+| Leadership names, roles, portraits | `leadership.ts` |
+| Photographs (albums and the three site slots) | `gallery.ts`, `photos.ts` — see `public/photos/README.md` |
+| Sermon and service recordings | `videos.ts` — provider + id, nothing to host |
+| PDFs for the four listed downloads | `resources.ts` + `/public/resources` |
+| A contact destination | `.env` — see below |
+
+Each of those renders an honest state until it is filled: an empty album says
+so, an unpublished download says "not published yet" rather than 404ing, and
+the form tells visitors to call rather than pretending to send. Nothing is
+stubbed with stock imagery or invented products.
+
+The Shop page is deliberate: there is no catalogue, so rather than inventing
+one it keeps the old URL alive, carries `noindex`, and points people at
+Resources and giving.
 
 ---
 

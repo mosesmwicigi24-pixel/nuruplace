@@ -770,3 +770,178 @@ code {
 
 .not-found { max-width: 40rem; margin-inline: auto; padding-block: var(--s-16); text-align: center; }
 .not-found .code { font-family: var(--font-display); font-size: 3rem; color: var(--brand-600); }
+
+/* ─── Announcements ──────────────────────────────────────────────────────── */
+.notice-list { display: grid; gap: var(--s-4); margin-top: var(--s-6); }
+
+.notice-item {
+  padding: var(--s-5) var(--s-6);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
+  border-radius: var(--radius);
+}
+
+/* A notice worth leading with gets the accent rail; everything else stays
+   quiet, so "urgent" keeps meaning something. */
+.notice-item.is-urgent { border-left-color: var(--accent-500); background: var(--accent-50); }
+
+.notice-title { margin-block: var(--s-2); }
+.notice-title a { display: inline-flex; align-items: center; min-height: var(--tap); }
+.notice-title a:hover { color: var(--brand-700); }
+
+/* Expired notices are kept for the record but visually stepped back. */
+.notice-list.is-past .notice-item { background: var(--surface-sunk); }
+.notice-list.is-past .label,
+.notice-list.is-past .t-body { color: var(--ink-400); }
+
+/* ─── Gallery ────────────────────────────────────────────────────────────── */
+.album-head { margin-bottom: var(--s-6); }
+.album-head .label { margin-block: var(--s-1) var(--s-3); }
+
+.gallery-grid {
+  display: grid;
+  gap: var(--s-3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+}
+
+.gallery-thumb {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface-sunk);
+  cursor: zoom-in;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.gallery-thumb:hover { border-color: var(--brand-400); }
+.gallery-thumb img { width: 100%; height: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .gallery-thumb:hover { transform: translateY(-2px); }
+}
+
+/* ─── Lightbox ───────────────────────────────────────────────────────────── */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 3rem);
+  background: rgb(11 16 32 / 92%);
+}
+
+.lightbox-figure { max-width: min(90vw, 72rem); text-align: center; }
+.lightbox-figure img { max-height: 78dvh; width: auto; height: auto; margin-inline: auto; border-radius: var(--radius); }
+.lightbox-figure figcaption { margin-top: var(--s-4); color: #cdd2e4; font-size: 0.875rem; }
+
+/* 44px, not the 24px floor: these sit over a photo where a near-miss closes
+   the wrong thing. */
+.lightbox-close,
+.lightbox-nav {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 44px; height: 44px;
+  border: 1px solid rgb(255 255 255 / 25%);
+  border-radius: var(--radius-pill);
+  background: rgb(11 16 32 / 60%);
+  color: var(--white);
+  cursor: pointer;
+}
+.lightbox-close:hover,
+.lightbox-nav:hover { background: rgb(11 16 32 / 90%); border-color: var(--white); }
+
+.lightbox-close { top: var(--s-4); right: var(--s-4); }
+.lightbox-prev  { left: var(--s-4); }
+.lightbox-next  { right: var(--s-4); }
+
+/* ─── Videos ─────────────────────────────────────────────────────────────── */
+.video-list { display: grid; gap: var(--s-10); }
+
+@media (min-width: 1024px) {
+  .video-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.video-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--ink-900);
+}
+.video-frame iframe { width: 100%; height: 100%; border: 0; }
+
+/* The facade: a poster and a play button. No provider iframe, no provider
+   cookies, and no megabyte, until someone actually asks for the video. */
+.video-facade {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  background-color: var(--ink-800);
+  background-size: cover;
+  background-position: center;
+}
+
+.video-play {
+  display: grid;
+  place-items: center;
+  width: 64px; height: 64px;
+  border-radius: var(--radius-pill);
+  background: rgb(220 43 15 / 92%);
+  color: var(--white);
+  transition: transform 0.15s, background-color 0.15s;
+}
+.video-facade:hover .video-play { background: var(--accent-500); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .video-facade:hover .video-play { transform: scale(1.08); }
+}
+
+.video-fallback { position: absolute; inset-inline: 0; bottom: var(--s-2); text-align: center; color: #cdd2e4; }
+.video-meta { margin-top: var(--s-4); }
+.video-meta .label { margin-block: var(--s-1) var(--s-2); }
+
+/* ─── Resources ──────────────────────────────────────────────────────────── */
+.resource-list { display: grid; gap: var(--s-4); }
+
+.resource-item {
+  display: grid;
+  gap: var(--s-4);
+  align-items: start;
+  grid-template-columns: auto 1fr;
+  padding: var(--s-5) var(--s-6);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+/* From tablet up the action sits on its own column; below that it wraps under
+   the text rather than squeezing a button into 40px on a 320px phone. */
+@media (min-width: 768px) {
+  .resource-item { grid-template-columns: auto 1fr auto; align-items: center; }
+}
+
+.resource-body { min-width: 0; }
+.resource-body .t-body { margin-top: var(--s-2); }
+
+.resource-action { grid-column: 1 / -1; gap: var(--s-2); }
+@media (min-width: 768px) { .resource-action { grid-column: auto; } }
+
+.resource-pending {
+  grid-column: 1 / -1;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  color: var(--ink-400);
+  font-size: 0.8rem;
+  font-style: italic;
+}
+@media (min-width: 768px) { .resource-pending { grid-column: auto; } }

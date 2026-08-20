@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { site } from "@/content/site";
 import { ministries } from "@/content/ministries";
 import { posts } from "@/content/posts";
+import { announcements } from "@/content/announcements";
 import { locales, localeTags } from "@/i18n/config";
 
 const paths = [
@@ -22,10 +23,12 @@ const paths = [
   "/gallery",
   "/videos",
   "/resources",
-  "/shop",
   "/contact-us",
   ...ministries.map((m) => `/ministries/${m.slug}`),
   ...posts.map((p) => `/blog/${p.slug}`),
+  ...announcements.map((a) => `/announcements/${a.slug}`),
+  // /shop is deliberately absent: it exists only to keep an old URL alive and
+  // carries robots noindex, so listing it here would contradict the page.
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

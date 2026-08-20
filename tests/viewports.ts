@@ -32,4 +32,13 @@ export const pages = [
   { path: "/sw/our-leadership", name: "leadership-sw" },
   { path: "/en/contact-us", name: "contact-en" },
   { path: "/sw/blog/messed-up-yet-qualified-by-grace", name: "post-sw" },
+  // Pages that were placeholders until they gained real content. The grids,
+  // lists and video facades they render are exactly where new layout bugs come
+  // from, so they are checked at every width like everything else.
+  { path: "/sw/announcements", name: "announcements-sw" },
+  { path: "/en/announcements/andrew-project-month", name: "notice-en" },
+  { path: "/sw/gallery", name: "gallery-sw" },
+  { path: "/en/videos", name: "videos-en" },
+  { path: "/sw/resources", name: "resources-sw" },
+  { path: "/en/shop", name: "shop-en" },
 ] as const;
