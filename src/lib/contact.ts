@@ -1,4 +1,5 @@
 import "server-only";
+import { createHmac } from "node:crypto";
 
 /**
  * Where a submitted form actually goes.
@@ -31,6 +32,33 @@ export type ContactSubmission = {
   planningVisit: boolean;
   submittedAt: string;
 };
+
+/**
+ * Sign the payload so the receiver can tell it came from this website.
+ *
+ * The Pathway intake is a `/webhooks/*` route: no session, no cookie, nothing
+ * to authenticate a caller with — exactly like its Stripe and mobile-money
+ * callbacks, which trust an HMAC over the raw body and nothing else. Without a
+ * signature that endpoint is an open door onto the pastoral inbox, and the
+ * first thing through it will be spam addressed to pastors.
+ *
+ * Timestamped and signed together so a captured request cannot be replayed
+ * later; the receiver rejects a stale timestamp. Same shape as Stripe's
+ * `t=…,v1=…` because Pathway's team already reads that format daily.
+ *
+ * Unsigned when CONTACT_WEBHOOK_SECRET is unset: a Zapier or Formspree hook
+ * has no way to verify one, and refusing to POST at all would make the honest
+ * "please call us" fallback unreachable for people using those.
+ */
+function signatureHeaders(body: string): Record<string, string> {
+  const secret = process.env.CONTACT_WEBHOOK_SECRET?.trim();
+  if (!secret) return {};
+  const timestamp = Math.floor(Date.now() / 1000).toString();
+  const signature = createHmac("sha256", secret)
+    .update(`${timestamp}.${body}`)
+    .digest("hex");
+  return { "x-nuruplace-signature": `t=${timestamp},v1=${signature}` };
+}
 
 export class ContactNotConfiguredError extends Error {
   constructor() {
@@ -80,10 +108,14 @@ export async function deliver(submission: ContactSubmission): Promise<void> {
   }
 
   if (webhook) {
+    const body = JSON.stringify(submission);
     const res = await fetch(webhook, {
       method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(submission),
+      headers: {
+        "content-type": "application/json",
+        ...signatureHeaders(body),
+      },
+      body,
       // A visitor should not wait forever on a slow downstream.
       signal: AbortSignal.timeout(10_000),
     });
