@@ -39,11 +39,45 @@ export class ContactNotConfiguredError extends Error {
   }
 }
 
+/**
+ * A destination only counts if it is actually usable.
+ *
+ * A configured-but-unusable endpoint is more dangerous than no endpoint at
+ * all: `deliver` takes that branch, the POST fails, and the visitor sees a
+ * generic "something went wrong" instead of the honest "please call us" —
+ * which is precisely the silent-drop this module exists to prevent.
+ *
+ * The shape that caused it in production was a placeholder pasted rather than
+ * filled in: `CONTACT_WEBHOOK_URL=https://…your endpoint…`. Non-empty, so the
+ * old check accepted it. Parsing rejects it, and rejects `not-a-url` and a
+ * blank-but-present value too. The protocol check is separate because
+ * `ftp://example.com` parses perfectly well and cannot receive a POST.
+ */
+function usableEndpoint(value: string | undefined): string | undefined {
+  if (!value?.trim()) return undefined;
+  try {
+    const url = new URL(value.trim());
+    if (url.protocol !== "https:" && url.protocol !== "http:") return undefined;
+    return url.href;
+  } catch {
+    return undefined;
+  }
+}
+
 export async function deliver(submission: ContactSubmission): Promise<void> {
-  const webhook = process.env.CONTACT_WEBHOOK_URL;
-  const emailTo = process.env.CONTACT_EMAIL_TO;
-  const emailApi = process.env.CONTACT_EMAIL_API;
-  const emailKey = process.env.CONTACT_EMAIL_KEY;
+  const webhook = usableEndpoint(process.env.CONTACT_WEBHOOK_URL);
+  const emailTo = process.env.CONTACT_EMAIL_TO?.trim();
+  const emailApi = usableEndpoint(process.env.CONTACT_EMAIL_API);
+  const emailKey = process.env.CONTACT_EMAIL_KEY?.trim();
+
+  // Say so loudly when something IS set but unusable — otherwise this looks
+  // identical to "nobody configured it yet" and nobody goes looking.
+  if (process.env.CONTACT_WEBHOOK_URL?.trim() && !webhook) {
+    console.error(
+      "[contact] CONTACT_WEBHOOK_URL is set but is not a usable http(s) URL — " +
+        "treating it as unconfigured. Check for an unfilled placeholder.",
+    );
+  }
 
   if (webhook) {
     const res = await fetch(webhook, {
