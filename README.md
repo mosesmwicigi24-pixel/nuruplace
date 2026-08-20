@@ -141,19 +141,28 @@ Blog (listing + articles), Contact, plus sitemap and robots.
 
 ## Deploying
 
-The project is a standard Next.js app and deploys to Vercel with no
-configuration — point Vercel at this repository and it builds as-is.
+The site runs on the church VPS alongside neema-ai and bethanyhouse, using the
+same pull-based arrangement those already use — **[deploy/README.md](deploy/README.md)
+is the full guide.**
 
-For a self-hosted VPS, add `output: "standalone"` to `next.config.ts`, then
-build and run a container:
-
-```bash
-docker build -t nuruplace .
-docker run -p 3000:3000 nuruplace
+```
+push to main → ci.yml (green) → deploy.yml pushes image to GHCR
+             → VPS timer pulls every 2 min → host nginx (TLS) → 127.0.0.1:3001
 ```
 
-Once the rebuild replaces the live site, point the `nuruplace.org` DNS record at
-the new deployment.
+CI does not deploy; the box pulls. That is not a preference — the host edge
+intermittently drops GitHub-runner IPs on port 22, so Actions→box SSH pushes
+are unreliable. neema-ai hit this first and this repo inherits the fix.
+
+Run the production image locally:
+
+```bash
+docker compose up --build      # http://localhost:3001
+```
+
+The old CodeIgniter site is served by a different nginx block on the same box.
+Cutover is enabling this one instead; rollback is the reverse. Nothing about
+the old site is deleted.
 
 ---
 

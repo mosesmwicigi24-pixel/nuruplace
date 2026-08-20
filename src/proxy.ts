@@ -61,6 +61,6 @@ export const config = {
   // Skip Next internals, the metadata routes served from the app root, and
   // anything with a file extension.
   matcher: [
-    "/((?!_next|api|icon.svg|manifest.webmanifest|opengraph-image|robots.txt|sitemap.xml|.*\\..*).*)",
+    "/((?!_next|api|healthz|icon.svg|manifest.webmanifest|opengraph-image|robots.txt|sitemap.xml|.*\\..*).*)",
   ],
 };

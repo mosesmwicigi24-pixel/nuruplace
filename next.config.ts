@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Self-hosted on the church VPS: standalone bundles the server and its deps
+  // into .next/standalone, so the runtime image needs no node_modules.
+  output: "standalone",
+
   images: {
     // Modern formats first — on a metered connection this is the single
     // biggest saving available on photographs.

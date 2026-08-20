@@ -1,0 +1,21 @@
+# Base compose. On the VPS this is combined with docker-compose.vps.yml:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d
+#
+# Locally, `docker compose up --build` builds from source instead of pulling.
+services:
+  web:
+    build:
+      context: .
+    image: ghcr.io/mosesmwicigi24-pixel/nuruplace-web:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      # Where the connection card delivers. Unset means the form refuses to
+      # submit and tells visitors to call instead — it never silently drops.
+      CONTACT_WEBHOOK_URL: ${CONTACT_WEBHOOK_URL:-}
+      CONTACT_EMAIL_TO: ${CONTACT_EMAIL_TO:-}
+      CONTACT_EMAIL_API: ${CONTACT_EMAIL_API:-}
+      CONTACT_EMAIL_KEY: ${CONTACT_EMAIL_KEY:-}
+      CONTACT_EMAIL_FROM: ${CONTACT_EMAIL_FROM:-}
+    ports:
+      - "3001:3000"

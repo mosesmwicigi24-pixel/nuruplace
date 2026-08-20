@@ -1,0 +1,15 @@
+# Pull-based deployer for nuruplace.org. Paired with nuruplace-deploy.timer.
+# Install on the VPS:
+#   sudo cp deploy/nuruplace-deploy.* /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now nuruplace-deploy.timer
+[Unit]
+Description=nuruplace pull-based deploy (git + GHCR -> recreate container)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/neema/nuruplace/scripts/box-deploy.sh
+# The script pulls public GHCR images and drives docker compose; needs root.
+User=root

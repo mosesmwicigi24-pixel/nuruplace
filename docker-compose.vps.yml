@@ -1,0 +1,19 @@
+# VPS override — used on the production box together with docker-compose.yml.
+#
+# The host-level nginx terminates TLS and proxies to this localhost port, so
+# the container is published on 127.0.0.1 ONLY. This box is shared with
+# neema-ai (port 3000) and bethanyhouse; nothing here should face the internet
+# directly.
+#
+# Port 3001 because neema-ai's web container already holds 3000.
+#
+# The image comes from GHCR, built by .github/workflows/deploy.yml on merge to
+# main — the box never builds images itself.
+services:
+  web:
+    image: ghcr.io/mosesmwicigi24-pixel/nuruplace-web:${IMAGE_TAG:-latest}
+    # `build` from the base file stays in the merged config, but the box only
+    # ever runs `compose pull` + `up -d`, so the pulled image wins and nothing
+    # is compiled here. Same arrangement as neema-ai.
+    ports:
+      - "127.0.0.1:3001:3000"

@@ -1,0 +1,17 @@
+node_modules
+.next
+out
+.git
+.github
+test-results
+playwright-report
+blob-report
+playwright/.cache
+tests
+playwright.config.ts
+*.log
+.env
+.env.local
+README.md
+deploy
+scripts

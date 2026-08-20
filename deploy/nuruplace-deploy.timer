@@ -1,0 +1,13 @@
+# Runs the pull-based deployer every 2 minutes (and shortly after boot).
+# Offset from neema-deploy by 60s so the two do not contend for the docker
+# daemon and the network on the same tick.
+[Unit]
+Description=Run nuruplace deploy check every 2 minutes
+
+[Timer]
+OnBootSec=150s
+OnUnitActiveSec=2min
+AccuracySec=15s
+
+[Install]
+WantedBy=timers.target
