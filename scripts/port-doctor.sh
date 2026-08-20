@@ -49,7 +49,23 @@ if [ -n "$sockets" ]; then
   printf '%s\n' "$sockets"
   verdict "Something holds :$PORT. Identify the owner above before reusing it."
 else
-  say "nothing — in any state"
+  say "ss: nothing, in any state"
+fi
+
+# ss has a blind spot and it is exactly the one that matters here: a TCP
+# socket that has been bind()ed but never listen()ed sits in CLOSE and is not
+# reported by `ss -tan` at all. It still owns the port. lsof and fuser walk
+# open file descriptors instead of the TCP tables, so they see it.
+if command -v lsof >/dev/null 2>&1; then
+  held=$(lsof -nP -iTCP:"$PORT" 2>/dev/null | tail -n +2)
+  [ -n "$held" ] && { printf '%s\n' "$held"; verdict "lsof found an owner ss could not see."; } \
+                 || say "lsof: no owner"
+else
+  say "lsof: not installed (apt-get install lsof) — this is the check ss cannot do"
+fi
+if command -v fuser >/dev/null 2>&1; then
+  f=$(fuser -n tcp "$PORT" 2>&1 | tr -d '\n')
+  [ -n "${f// /}" ] && say "fuser: $f" || say "fuser: no owner"
 fi
 
 # ------------------------------------------------------- 2. ephemeral range
@@ -155,6 +171,61 @@ else
     verdict "The control test failed for an unrelated reason:"
     say "$err"
     say "That is not a port problem — read the error above before going further."
+  fi
+fi
+
+# -------------------------------------------------- 6. isolate the variable
+# Step 5 proves the daemon can publish SOME port. It does not say which of the
+# two things that differ from the real run is to blame: the port number, or the
+# user-defined bridge compose puts the container on. Testing them together is
+# how you end up with a theory instead of an answer, so test them apart.
+hr "6. Is it the port, or the network?"
+if [ "$DOCKER_UP" = no ]; then
+  say "skipped — no daemon"
+else
+  img=$(docker images --format '{{.Repository}}:{{.Tag}}' 2>/dev/null \
+        | grep -m1 'nuruplace-web')
+  img=${img:-busybox:latest}
+  free=$((PORT + 20001))
+  net=nuruplace_porttest_net
+
+  probe() { # name, port, [network args...]
+    local n=$1 p=$2; shift 2
+    local e
+    e=$(docker run --rm -d --name "$n" --entrypoint sleep "$@" \
+          -p "127.0.0.1:$p:3000" "$img" 15 2>&1 >/dev/null)
+    local r=$?
+    docker rm -f "$n" >/dev/null 2>&1
+    [ $r -eq 0 ] && echo OK || echo "FAILED: $(printf '%s' "$e" | tail -1)"
+  }
+
+  docker network create "$net" >/dev/null 2>&1
+  a=$(probe pd_a "$PORT")                       # target port, default bridge
+  b=$(probe pd_b "$free" --network "$net")      # free port, user-defined net
+  docker network rm "$net" >/dev/null 2>&1
+
+  say "A  port $PORT on the default bridge   : $a"
+  say "B  port $free on a user-defined bridge : $b"
+  say ""
+  if [ "${a#OK}" != "$a" ] && [ "${b#OK}" != "$b" ]; then
+    verdict "Both work in isolation — only the COMBINATION fails."
+    say "Look for a leaked reservation tied to this compose project."
+  elif [ "${a#OK}" = "$a" ] && [ "${b#OK}" != "$b" ]; then
+    verdict "Port $PORT itself is refused; the network is fine."
+    say "The daemon's allocator is holding $PORT with nothing behind it. That"
+    say "state lives in the daemon and does not clear when containers are"
+    say "removed — and the daemon must NOT be restarted on this box."
+    say ""
+    say "Take a port well away from the ones already churned:"
+    say "  sudo -u $OWNER sed -i 's/^WEB_PORT=.*/WEB_PORT=8090/' $REPO/.env"
+    say "  docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d web"
+    say "  # then set the nginx upstream to 8090 to match"
+  elif [ "${a#OK}" != "$a" ]; then
+    verdict "The user-defined bridge is the problem, not port $PORT."
+    say "Use docker-compose.direct.yml, or clear the project's networks."
+  else
+    verdict "Neither works. Re-read step 5 — the allocator is refusing broadly."
+    say "Use docker-compose.direct.yml (no host port at all)."
   fi
 fi
 
