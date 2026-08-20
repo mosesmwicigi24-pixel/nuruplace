@@ -18,4 +18,6 @@ services:
       CONTACT_EMAIL_KEY: ${CONTACT_EMAIL_KEY:-}
       CONTACT_EMAIL_FROM: ${CONTACT_EMAIL_FROM:-}
     ports:
-      - "3001:3000"
+      # Host port is box state, not repo state — set WEB_PORT in .env when
+      # 3001 is taken. The container always listens on 3000 internally.
+      - "${WEB_PORT:-3001}:3000"

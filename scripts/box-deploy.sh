@@ -18,7 +18,10 @@ set -euo pipefail
 REPO=${NURUPLACE_REPO:-/home/neema/nuruplace}
 LOCK=/tmp/nuruplace-deploy.lock
 OWNER=${NURUPLACE_OWNER:-neema}
-HEALTH_URL=${NURUPLACE_HEALTH_URL:-http://127.0.0.1:3001/healthz}
+# Read WEB_PORT from the repo's .env so the gate follows the configured port
+# rather than a number baked in here.
+WEB_PORT=$(sed -n 's/^WEB_PORT=//p' "${NURUPLACE_REPO:-/home/neema/nuruplace}/.env" 2>/dev/null | tail -1)
+HEALTH_URL=${NURUPLACE_HEALTH_URL:-http://127.0.0.1:${WEB_PORT:-3001}/healthz}
 COMPOSE=(docker compose -f docker-compose.yml -f docker-compose.vps.yml)
 IMAGE=ghcr.io/mosesmwicigi24-pixel/nuruplace-web:latest
 

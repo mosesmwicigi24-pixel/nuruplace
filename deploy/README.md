@@ -25,9 +25,23 @@ deploy** — so `deploy.yml` will not build until `ci.yml` is green.
 
 ## Port
 
-`3001`. Port 3000 on this box belongs to neema-ai's web container. The
-container is published on `127.0.0.1` only — the box is shared, and nothing
-here should face the internet except through nginx.
+Default `3001` — port 3000 belongs to neema-ai's web container. Published on
+`127.0.0.1` only: the box is shared, and nothing here should face the internet
+except through nginx.
+
+**This box already has services on ports you may not expect.** If `up -d`
+fails with `failed to bind host port ... address already in use`, find the
+holder and pick another port:
+
+```bash
+sudo ss -ltnp | grep -E ':(3001|3002|3003)\b'     # what is listening
+echo 'WEB_PORT=3002' >> /home/neema/nuruplace/.env  # pick a free one
+docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d web
+```
+
+`WEB_PORT` drives the compose binding **and** the health gate in
+`scripts/box-deploy.sh`. It does **not** drive nginx — update the `upstream`
+block in `deploy/nginx/nuruplace.org.conf` to match, then reload nginx.
 
 ## One-time setup on the box
 
@@ -44,7 +58,7 @@ ENV
 cd /home/neema/nuruplace
 docker compose -f docker-compose.yml -f docker-compose.vps.yml pull web
 docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d web
-curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3001/healthz   # expect 200
+curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:"${WEB_PORT:-3001}"/healthz   # expect 200
 
 # 4. Automatic deploys
 sudo cp deploy/nuruplace-deploy.* /etc/systemd/system/
