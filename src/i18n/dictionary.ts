@@ -23,6 +23,14 @@ export type Dictionary = {
     planVisit: string;
     listenSermon: string;
     learnMore: string;
+    /** Carousel controls. `carouselSlide` uses {n} and {total} placeholders. */
+    carouselLabel: string;
+    carouselSlide: string;
+    carouselPrev: string;
+    carouselNext: string;
+    carouselPause: string;
+    carouselPlay: string;
+    carouselGoTo: string;
     getInTouch: string;
     skipToContent: string;
     openMenu: string;
@@ -147,6 +155,13 @@ const en: Dictionary = {
     ourCauses: "See Our Causes",
     planVisit: "Plan Your Visit",
     listenSermon: "Listen to a Sermon",
+    carouselLabel: "Welcome",
+    carouselSlide: "Slide {n} of {total}",
+    carouselPrev: "Previous slide",
+    carouselNext: "Next slide",
+    carouselPause: "Pause the slideshow",
+    carouselPlay: "Play the slideshow",
+    carouselGoTo: "Choose a slide",
     learnMore: "Learn More About Us",
     getInTouch: "Get in touch",
     skipToContent: "Skip to content",
@@ -282,6 +297,13 @@ const sw: Dictionary = {
     ourCauses: "Tazama Miradi Yetu",
     planVisit: "Panga Ujio Wako",
     listenSermon: "Sikiliza Hubiri",
+    carouselLabel: "Karibu",
+    carouselSlide: "Slaidi {n} kati ya {total}",
+    carouselPrev: "Slaidi iliyotangulia",
+    carouselNext: "Slaidi ifuatayo",
+    carouselPause: "Simamisha slaidi",
+    carouselPlay: "Endesha slaidi",
+    carouselGoTo: "Chagua slaidi",
     learnMore: "Jifunze Zaidi Kutuhusu",
     getInTouch: "Wasiliana nasi",
     skipToContent: "Rukia yaliyomo",

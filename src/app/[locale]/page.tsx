@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Button, Scripture, SectionHeading } from "@/components/ui";
 import { EventCard, MinistryCard, PostCard, SermonCard } from "@/components/cards";
 import { Photo } from "@/components/photo";
+import { HeroCarousel } from "@/components/hero-carousel";
 import { photos, hasPhoto } from "@/content/photos";
 import { site, tagline } from "@/content/site";
 import { ministries } from "@/content/ministries";
@@ -34,57 +35,52 @@ export default async function HomePage({ params }: Props) {
 
   return (
     <>
-      <section className="bg-hero">
-        {/* Renders nothing until a real photograph exists; the gradient
-            carries the hero on its own until then. */}
-        {hasPhoto(photos.hero) && (
-          <div className="hero-photo" aria-hidden>
-            <Photo name="hero" locale={locale} sizes="100vw" priority />
-          </div>
-        )}
-        <div className="shell hero-inner">
-          <p className="t-lead eyebrow" style={{ color: "var(--brand-300)" }}>
-            {tagline[locale]}
-          </p>
-          <h1 className="t-hero on-dark" style={{ marginTop: "var(--s-4)" }}>
-            {home.heroTitle}
-          </h1>
-          <p
-            className="t-lead on-dark-soft"
-            style={{ maxWidth: "56ch", margin: "var(--s-6) auto 0" }}
-          >
-            {home.heroBody}
-          </p>
-          <div className="btn-group row-center" style={{ marginTop: "var(--s-10)" }}>
-            <Button href={p("/plan-your-visit")}>{common.planVisit}</Button>
-            <Button href={p("/sermons")} variant="outline">
-              {common.listenSermon}
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-brand section">
-        <div className="shell">
-          <Scripture reference="John 8:12">
-            {locale === "sw"
-              ? "Mimi ndimi nuru ya ulimwengu. Yeye anifuataye hatakwenda gizani kamwe, bali atakuwa na nuru ya uzima"
-              : "I am the light of the world. If you follow me, you won’t have to walk in darkness, because you will have the light that leads to life"}
-          </Scripture>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="measure center">
-          <SectionHeading eyebrow={home.welcomeEyebrow} title={home.welcomeTitle} />
-          <p className="t-body" style={{ marginTop: "var(--s-8)" }}>
-            {home.welcomeBody}
-          </p>
-          <div style={{ marginTop: "var(--s-8)" }}>
-            <Button href={p("/about-us")}>{common.learnMore}</Button>
-          </div>
-        </div>
-      </section>
+      {/* Three stacked bands (hero, scripture, welcome) became one carousel.
+          The slides are built here, on the server, from the same dictionary
+          strings the sections used — so nothing needed retranslating and the
+          first slide is in the HTML before any JavaScript runs. */}
+      <HeroCarousel
+        backdrop={
+          hasPhoto(photos.hero) ? (
+            <div className="hero-photo" aria-hidden>
+              <Photo name="hero" locale={locale} sizes="100vw" priority />
+            </div>
+          ) : undefined
+        }
+        labels={{
+          carousel: common.carouselSlide,
+          previous: common.carouselPrev,
+          next: common.carouselNext,
+          pause: common.carouselPause,
+          play: common.carouselPlay,
+          goTo: common.carouselGoTo,
+        }}
+        slides={[
+          {
+            eyebrow: tagline[locale],
+            title: home.heroTitle,
+            body: home.heroBody,
+            ctas: [
+              { href: p("/plan-your-visit"), label: common.planVisit },
+              { href: p("/sermons"), label: common.listenSermon, variant: "outline" },
+            ],
+          },
+          {
+            title:
+              locale === "sw"
+                ? "Mimi ndimi nuru ya ulimwengu. Yeye anifuataye hatakwenda gizani kamwe, bali atakuwa na nuru ya uzima"
+                : "I am the light of the world. If you follow me, you won’t have to walk in darkness, because you will have the light that leads to life",
+            reference: "John 8:12",
+            body: "",
+          },
+          {
+            eyebrow: home.welcomeEyebrow,
+            title: home.welcomeTitle,
+            body: home.welcomeBody,
+            ctas: [{ href: p("/about-us"), label: common.learnMore }],
+          },
+        ]}
+      />
 
       {andrew && (
         <section className="bg-wash section">
