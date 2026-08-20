@@ -40,13 +40,6 @@ export default async function HomePage({ params }: Props) {
           strings the sections used — so nothing needed retranslating and the
           first slide is in the HTML before any JavaScript runs. */}
       <HeroCarousel
-        backdrop={
-          hasPhoto(photos.hero) ? (
-            <div className="hero-photo" aria-hidden>
-              <Photo name="hero" locale={locale} sizes="100vw" priority />
-            </div>
-          ) : undefined
-        }
         labels={{
           carousel: common.carouselSlide,
           previous: common.carouselPrev,
@@ -57,6 +50,7 @@ export default async function HomePage({ params }: Props) {
         }}
         slides={[
           {
+            art: heroArt("hero", locale, true),
             eyebrow: tagline[locale],
             title: home.heroTitle,
             body: home.heroBody,
@@ -66,6 +60,7 @@ export default async function HomePage({ params }: Props) {
             ],
           },
           {
+            art: heroArt("heroScripture", locale),
             title:
               locale === "sw"
                 ? "Mimi ndimi nuru ya ulimwengu. Yeye anifuataye hatakwenda gizani kamwe, bali atakuwa na nuru ya uzima"
@@ -74,6 +69,7 @@ export default async function HomePage({ params }: Props) {
             body: "",
           },
           {
+            art: heroArt("heroWelcome", locale),
             eyebrow: home.welcomeEyebrow,
             title: home.welcomeTitle,
             body: home.welcomeBody,
@@ -239,6 +235,28 @@ function ServiceColumn({
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+/**
+ * The artwork behind one hero slide.
+ *
+ * Returns nothing at all when no file has been supplied — which is every slot
+ * today. The slide's own gradient carries it, and no stock face or generated
+ * "congregation" stands in for people who have not been photographed. Drop a
+ * file into /public/photos and set `src` in content/photos.ts and it appears
+ * here with no other change.
+ */
+function heroArt(
+  name: "hero" | "heroScripture" | "heroWelcome",
+  locale: Locale,
+  priority = false,
+) {
+  if (!hasPhoto(photos[name])) return undefined;
+  return (
+    <div className="hero-photo" aria-hidden>
+      <Photo name={name} locale={locale} sizes="100vw" priority={priority} />
     </div>
   );
 }

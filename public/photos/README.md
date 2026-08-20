@@ -18,6 +18,13 @@ church for someone like me?*
 | `hero` | The congregation mid-worship, wide, faces visible | The homepage currently answers "what do you believe" but not "who is here" |
 | `building` | The entrance or gate from the street | So a first-time visitor recognises the place when they arrive |
 | `welcome` | People talking after a service — greeting, not posing | Shows what happens *around* the service, which is what most people are nervous about |
+| `heroScripture` | Light through a window, the sanctuary at dawn, open hands — **no faces** | Sits behind the John 8:12 slide. A face under a verse reads as an illustration of it, and the verse is about Christ, not about whoever was in frame |
+| `heroWelcome` | People arriving and greeting one another before a service | Sits behind the welcome slide, where a stranger is deciding whether to come |
+
+The homepage hero is a three-slide carousel, and `hero`, `heroScripture` and
+`heroWelcome` sit behind slides 1, 2 and 3. Supplying even one changes that
+slide immediately; the other two keep their gradient until their file arrives.
+There is no need to do all three at once.
 
 Photograph real moments rather than arranged line-ups. A slightly imperfect
 picture of people genuinely glad to see each other beats a sharp one of people

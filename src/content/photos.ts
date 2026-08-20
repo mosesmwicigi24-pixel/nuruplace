@@ -38,6 +38,26 @@ export const photos: Record<string, Photo> = {
       sw: "Lango la kanisa la The Good News Mission huko Saika",
     },
   },
+  /**
+   * Behind hero slide 2 (the John 8:12 scripture). Deliberately NOT people:
+   * a face under a verse reads as an illustration of it, and the verse is
+   * about Christ, not about whoever happened to be photographed. Light through
+   * a window, the building at dawn, hands open — something that carries the
+   * word without putting a person in it.
+   */
+  heroScripture: {
+    alt: {
+      en: "Morning light falling across the sanctuary at The Good News Mission",
+      sw: "Mwanga wa asubuhi ukiingia ndani ya kanisa la The Good News Mission",
+    },
+  },
+  /** Behind hero slide 3 (the welcome). People arriving or greeting — warm, real. */
+  heroWelcome: {
+    alt: {
+      en: "Members welcoming one another before a Sunday service",
+      sw: "Waumini wakikaribishana kabla ya ibada ya Jumapili",
+    },
+  },
   /** Welcome team or people talking after a service — used on Plan Your Visit. */
   welcome: {
     alt: {

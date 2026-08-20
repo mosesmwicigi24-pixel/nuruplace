@@ -1062,3 +1062,29 @@ code {
   .hero-slide { transition: none; }
   .hero-dot::before { transition: none; }
 }
+
+/* Per-slide tone. Without photographs the three slides would be identical
+   dark panels and the carousel would look broken rather than deliberate, so
+   each carries its own gradient. These are decoration — a gradient claims
+   nothing about the world, which is why they are acceptable here when a stock
+   photograph of strangers would not be. When a real photograph arrives it
+   layers on top and the gradient becomes its scrim. */
+.hero-tone-0 {
+  background: radial-gradient(ellipse at 50% -10%, rgb(28 36 255 / 45%), transparent 65%);
+}
+
+.hero-tone-1 {
+  background:
+    radial-gradient(ellipse at 15% 10%, rgb(220 43 15 / 28%), transparent 55%),
+    radial-gradient(ellipse at 85% 90%, rgb(28 36 255 / 40%), transparent 60%);
+}
+
+.hero-tone-2 {
+  background:
+    radial-gradient(ellipse at 80% -5%, rgb(28 36 255 / 38%), transparent 60%),
+    radial-gradient(ellipse at 10% 100%, rgb(28 36 255 / 22%), transparent 55%);
+}
+
+/* The photograph sits above the tone and below the text. */
+.hero-slide .hero-photo { z-index: 0; }
+.hero-slide .hero-inner { position: relative; z-index: 1; }

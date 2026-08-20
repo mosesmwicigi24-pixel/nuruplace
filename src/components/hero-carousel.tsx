@@ -35,12 +35,16 @@ export type HeroSlide = {
   /** Set for a scripture slide: rendered as a quotation with its reference. */
   reference?: string;
   ctas?: { href: string; label: string; variant?: "solid" | "outline" }[];
+  /**
+   * The photograph behind this slide, when the church has supplied one.
+   * Rendered by the caller (a server component) so Next can optimise it — this
+   * is a client component and cannot import next/image's server behaviour.
+   */
+  art?: React.ReactNode;
 };
 
 type Props = {
   slides: HeroSlide[];
-  /** Rendered behind every slide — the hero photograph, when one exists. */
-  backdrop?: React.ReactNode;
   labels: {
     /** e.g. "Slide {n} of {total}" */
     carousel: string;
@@ -54,7 +58,7 @@ type Props = {
 
 const INTERVAL_MS = 7000;
 
-export function HeroCarousel({ slides, backdrop, labels }: Props) {
+export function HeroCarousel({ slides, labels }: Props) {
   const [index, setIndex] = useState(0);
   // Starts true so the very first paint matches the server. Auto-advance is
   // switched on in an effect, which never runs for a user who has asked for
@@ -109,8 +113,6 @@ export function HeroCarousel({ slides, backdrop, labels }: Props) {
         if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(reducedMotion);
       }}
     >
-      {backdrop}
-
       <div
         ref={region}
         className="hero-track"
@@ -121,7 +123,7 @@ export function HeroCarousel({ slides, backdrop, labels }: Props) {
         {slides.map((s, i) => (
           <div
             key={i}
-            className={`hero-slide${i === index ? " is-current" : ""}`}
+            className={`hero-slide hero-tone-${i % 3}${i === index ? " is-current" : ""}`}
             role="group"
             aria-roledescription="slide"
             aria-label={labels.carousel.replace("{n}", String(i + 1)).replace("{total}", String(count))}
@@ -131,6 +133,10 @@ export function HeroCarousel({ slides, backdrop, labels }: Props) {
             // as a real boolean and omits the attribute when false.
             inert={i !== index}
           >
+            {/* Each slide gets its own artwork and its own gradient tone, so
+                the three read as distinct panels even before any photograph
+                exists — which, today, is the case. */}
+            {s.art}
             <div className="shell hero-inner">
               {s.eyebrow && (
                 <p className="t-lead eyebrow" style={{ color: "var(--brand-300)" }}>
