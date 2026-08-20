@@ -15,12 +15,16 @@
 # nothing changed, so a two-minute tick causes no churn.
 set -euo pipefail
 
-REPO=${NURUPLACE_REPO:-/home/neema/nuruplace}
+# The checkout lives under /srv and is owned by its own `nuruplace` user, not
+# inside another project's home directory. This box hosts several unrelated
+# services; a project buried in a colleague's home reads as belonging to them,
+# and its files inherit that account's fate.
+REPO=${NURUPLACE_REPO:-/srv/nuruplace}
 LOCK=/tmp/nuruplace-deploy.lock
-OWNER=${NURUPLACE_OWNER:-neema}
+OWNER=${NURUPLACE_OWNER:-nuruplace}
 # Read WEB_PORT from the repo's .env so the gate follows the configured port
 # rather than a number baked in here.
-WEB_PORT=$(sed -n 's/^WEB_PORT=//p' "${NURUPLACE_REPO:-/home/neema/nuruplace}/.env" 2>/dev/null | tail -1)
+WEB_PORT=$(sed -n 's/^WEB_PORT=//p' "$REPO/.env" 2>/dev/null | tail -1)
 HEALTH_URL=${NURUPLACE_HEALTH_URL:-http://127.0.0.1:${WEB_PORT:-3001}/healthz}
 COMPOSE=(docker compose -f docker-compose.yml -f docker-compose.vps.yml)
 IMAGE=ghcr.io/mosesmwicigi24-pixel/nuruplace-web:latest

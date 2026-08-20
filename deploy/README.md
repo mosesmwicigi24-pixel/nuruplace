@@ -15,6 +15,25 @@ VPS systemd timer (every 2 min) runs scripts/box-deploy.sh
 host nginx (TLS) → 127.0.0.1:3001
 ```
 
+## It stands on its own
+
+Nothing here is shared with the other projects on the box:
+
+| | |
+|---|---|
+| Checkout | `/srv/nuruplace`, owned by the `nuruplace` user |
+| Image | `ghcr.io/mosesmwicigi24-pixel/nuruplace-web` |
+| Container | `nuruplace_web` |
+| Compose project / network | `nuruplace` / `nuruplace_default` |
+| systemd units | `nuruplace-deploy.service` / `.timer` |
+| Port | its own, `127.0.0.1` only |
+
+`/srv` rather than someone's home directory: this box runs a mail server,
+neema-ai and bethanyhouse, and a project buried in a colleague's home reads as
+belonging to them — and inherits that account's fate if it is ever locked,
+moved or removed. The compose project name is pinned rather than derived from
+the directory, so the container keeps its identity wherever the checkout sits.
+
 **CI does not deploy.** The box pulls. That is not a preference — the host edge
 intermittently drops GitHub-runner IPs on port 22, which made Actions→box SSH
 pushes unreliable. Outbound-from-box pulls are unaffected. neema-ai hit this
@@ -57,7 +76,7 @@ the ones after it still ran — against the old code — which produces errors t
 look like the thing you were trying to fix and are not.
 
 ```bash
-sudo -u neema git pull          # right
+sudo -u nuruplace git pull      # right
 git pull                        # wrong, as root
 ```
 
@@ -65,27 +84,65 @@ git pull                        # wrong, as root
 so automatic deploys are unaffected. It only bites manual commands.
 
 Adding `safe.directory` for root would silence it, but then root-run git leaves
-root-owned objects in a `neema`-owned tree and the timer breaks later. Run git
-as the owner instead. The same applies to `.env`:
+root-owned objects in a `nuruplace`-owned tree and the timer breaks later. Run
+git as the owner instead. The same applies to `.env`:
 
 ```bash
-echo 'WEB_PORT=3005' >> .env               # creates a root-owned file
-sudo chown neema:neema .env                # fix it, or the timer cannot read it
+echo 'WEB_PORT=3013' >> .env                     # creates a root-owned file
+sudo chown nuruplace:nuruplace .env              # or the timer cannot read it
 ```
+
+## Moving an existing checkout out of `/home/neema`
+
+Early instructions put the checkout at `/home/neema/nuruplace`. Nothing depends
+on that path except the systemd unit, so relocating is cheap — and the image,
+container and network were always separate, so nothing about the running site
+is entangled with neema-ai.
+
+```bash
+# Stop the loop before moving anything under it
+sudo systemctl stop nuruplace-deploy.timer
+cd /home/neema/nuruplace
+docker compose -f docker-compose.yml -f docker-compose.vps.yml down --remove-orphans
+
+# Account and new home
+sudo useradd --system --shell /usr/sbin/nologin nuruplace 2>/dev/null || true
+sudo mv /home/neema/nuruplace /srv/nuruplace
+sudo chown -R nuruplace:nuruplace /srv/nuruplace
+
+# Point the unit at the new path and reload
+cd /srv/nuruplace
+sudo -u nuruplace git pull
+sudo cp deploy/nuruplace-deploy.* /etc/systemd/system/
+sudo systemctl daemon-reload
+
+# Bring it back up from the new location
+docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d web
+curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:"${WEB_PORT:-3001}"/healthz
+sudo systemctl start nuruplace-deploy.timer
+```
+
+`.env` moves with the directory, so the contact destination and port survive.
 
 ## One-time setup on the box
 
 ```bash
-# 1. Clone beside the other projects
-sudo -u neema git clone https://github.com/mosesmwicigi24-pixel/nuruplace.git /home/neema/nuruplace
+# 1. Its own service account and its own directory. No login shell: this
+#    account exists to own files and run git, not for anyone to sign in as.
+sudo useradd --system --create-home --home-dir /srv/nuruplace \
+             --shell /usr/sbin/nologin nuruplace
+sudo usermod -aG docker nuruplace          # only if you want non-root compose
+
+sudo -u nuruplace git clone https://github.com/mosesmwicigi24-pixel/nuruplace.git /srv/nuruplace
 
 # 2. Contact-form destination (the form refuses to submit without one)
-sudo -u neema tee /home/neema/nuruplace/.env >/dev/null <<'ENV'
+sudo -u nuruplace tee /srv/nuruplace/.env >/dev/null <<'ENV'
 CONTACT_WEBHOOK_URL=https://…            # or the CONTACT_EMAIL_* trio
+WEB_PORT=3013                            # a port nothing else on this box uses
 ENV
 
 # 3. First pull and start
-cd /home/neema/nuruplace
+cd /srv/nuruplace
 docker compose -f docker-compose.yml -f docker-compose.vps.yml pull web
 
 # Prove the port actually resolved before starting anything — this is the step

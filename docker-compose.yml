@@ -3,11 +3,19 @@
 #   docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d
 #
 # Locally, `docker compose up --build` builds from source instead of pulling.
+
+# Pinned rather than derived from the directory name, so the project, network
+# and container keep the same identity wherever the checkout lives. On a shared
+# box that matters: `docker ps` should say what a container is without anyone
+# having to know which directory it was started from.
+name: nuruplace
+
 services:
   web:
     build:
       context: .
     image: ghcr.io/mosesmwicigi24-pixel/nuruplace-web:${IMAGE_TAG:-latest}
+    container_name: nuruplace_web
     restart: unless-stopped
     environment:
       # Where the connection card delivers. Unset means the form refuses to

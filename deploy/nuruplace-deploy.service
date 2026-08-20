@@ -10,6 +10,8 @@ Requires=docker.service
 
 [Service]
 Type=oneshot
-ExecStart=/home/neema/nuruplace/scripts/box-deploy.sh
+ExecStart=/srv/nuruplace/scripts/box-deploy.sh
 # The script pulls public GHCR images and drives docker compose; needs root.
+# It drops to the `nuruplace` user for every git operation.
 User=root
+WorkingDirectory=/srv/nuruplace
