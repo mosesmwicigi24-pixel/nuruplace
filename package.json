@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "stats": "node scripts/stats.mjs",
     "test": "playwright test",
     "test:responsive": "playwright test tests/responsive.spec.ts",
     "test:a11y": "playwright test tests/accessibility.spec.ts"

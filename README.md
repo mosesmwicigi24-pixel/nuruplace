@@ -25,7 +25,26 @@ Other scripts:
 | `npm run build` | Production build |
 | `npm start` | Serve the production build |
 | `npm run lint` | ESLint |
+| `npm run stats` | Print the current stack summary — file counts, versions, deps |
 | `npm test` | Responsive + accessibility suite (builds and serves first) |
+
+### The stack, at any moment
+
+```
+$ npm run stats
+Language      TypeScript — 36 .tsx + 28 .ts files
+Framework     Next.js 16.2.10, App Router
+UI            React 19.2.4
+Styling       One hand-written globals.css, 948 lines (no Tailwind/CSS-in-JS)
+Code          5300 lines TS/TSX, 948 lines CSS
+Routes        23 page/route files, 2 locales
+Runtime deps  lucide-react, next, react, react-dom
+```
+
+Those numbers are printed rather than written down on purpose: a file count in
+prose is wrong the moment somebody adds a file, and this summary had already
+gone stale twice before the script existed. Run it when you need the figures;
+do not paste them into a document that cannot update itself.
 
 ---
 
