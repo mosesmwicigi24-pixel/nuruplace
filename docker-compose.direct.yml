@@ -1,0 +1,46 @@
+# Fallback: no host port at all.
+#
+# Used ALONE, not merged with the others:
+#
+#   docker compose -f docker-compose.direct.yml up -d web
+#
+# Publishing a host port means asking Docker's port allocator for one, and on
+# this box that ask has failed repeatedly for ports nothing was using. This
+# file sidesteps the allocator completely: the container gets a fixed address
+# on its own bridge network and nginx proxies straight to it. No host port is
+# claimed, so there is nothing to collide with.
+#
+# It is deliberately standalone rather than an override fragment — clearing an
+# inherited `ports:` list needs the `!reset` tag from Compose 2.24+, and a
+# fallback that depends on a recent Compose is not much of a fallback.
+#
+# The trade-off: nginx must point at 172.29.0.2:3000 rather than 127.0.0.1,
+# and the subnet must not collide with anything else on the box. Check with
+# `docker network inspect $(docker network ls -q) | grep Subnet` first.
+name: nuruplace
+
+services:
+  web:
+    build:
+      context: .
+    image: ghcr.io/mosesmwicigi24-pixel/nuruplace-web:${IMAGE_TAG:-latest}
+    container_name: nuruplace_web
+    restart: unless-stopped
+    environment:
+      CONTACT_WEBHOOK_URL: ${CONTACT_WEBHOOK_URL:-}
+      CONTACT_EMAIL_TO: ${CONTACT_EMAIL_TO:-}
+      CONTACT_EMAIL_API: ${CONTACT_EMAIL_API:-}
+      CONTACT_EMAIL_KEY: ${CONTACT_EMAIL_KEY:-}
+      CONTACT_EMAIL_FROM: ${CONTACT_EMAIL_FROM:-}
+    networks:
+      direct:
+        # Fixed, so nginx can hard-code it. A container that gets whatever
+        # address the bridge hands out today breaks nginx tomorrow.
+        ipv4_address: ${WEB_IP:-172.29.0.2}
+
+networks:
+  direct:
+    name: nuruplace_direct
+    ipam:
+      config:
+        - subnet: ${WEB_SUBNET:-172.29.0.0/24}

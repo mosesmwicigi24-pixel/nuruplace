@@ -22,12 +22,32 @@ set -euo pipefail
 REPO=${NURUPLACE_REPO:-/srv/nuruplace}
 LOCK=/tmp/nuruplace-deploy.lock
 OWNER=${NURUPLACE_OWNER:-nuruplace}
-# Read WEB_PORT from the repo's .env so the gate follows the configured port
-# rather than a number baked in here.
-WEB_PORT=$(sed -n 's/^WEB_PORT=//p' "$REPO/.env" 2>/dev/null | tail -1)
-HEALTH_URL=${NURUPLACE_HEALTH_URL:-http://127.0.0.1:${WEB_PORT:-3001}/healthz}
-COMPOSE=(docker compose -f docker-compose.yml -f docker-compose.vps.yml)
 IMAGE=ghcr.io/mosesmwicigi24-pixel/nuruplace-web:latest
+
+# Read box-specific settings from the repo's .env rather than baking them in
+# here: which port, which compose files, where to knock for health. All three
+# are properties of this machine, not of the code.
+envval() { sed -n "s/^$1=//p" "$REPO/.env" 2>/dev/null | tail -1; }
+
+WEB_PORT=$(envval WEB_PORT)
+
+# COMPOSE_FILES lets the box switch to docker-compose.direct.yml — the
+# no-host-port fallback — without this script needing to know why. Space
+# separated; unset means the normal published-port arrangement.
+COMPOSE=(docker compose)
+COMPOSE_FILES=$(envval COMPOSE_FILES)
+if [ -n "$COMPOSE_FILES" ]; then
+  # shellcheck disable=SC2206  # deliberate word splitting: it is a file list
+  files=($COMPOSE_FILES)
+else
+  files=(docker-compose.yml docker-compose.vps.yml)
+fi
+for f in "${files[@]}"; do COMPOSE+=(-f "$f"); done
+
+# On the direct path there is no host port to curl, so the gate has to aim at
+# the container's own address. Setting HEALTH_URL in .env covers both.
+HEALTH_URL=${NURUPLACE_HEALTH_URL:-$(envval HEALTH_URL)}
+HEALTH_URL=${HEALTH_URL:-http://127.0.0.1:${WEB_PORT:-3001}/healthz}
 
 # Never run two deploys at once — a slow pull must not overlap the next tick.
 exec 9>"$LOCK"

@@ -48,27 +48,88 @@ Default `3001` — port 3000 belongs to neema-ai's web container. Published on
 `127.0.0.1` only: the box is shared, and nothing here should face the internet
 except through nginx.
 
-**This box already has services on ports you may not expect.** If `up -d`
-fails with `failed to bind host port ... address already in use`, find the
-holder and pick another port:
-
-```bash
-sudo ss -ltnp | grep -E ':(3001|3002|3003)\b'     # what is listening
-echo 'WEB_PORT=3002' >> /home/neema/nuruplace/.env  # pick a free one
-docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d web
-```
-
 `WEB_PORT` drives the compose binding **and** the health gate in
 `scripts/box-deploy.sh`. It does **not** drive nginx — update the `upstream`
 block in `deploy/nginx/nuruplace.org.conf` to match, then reload nginx.
 
-## Always run git as `neema`, never as root
+## When the port is "already in use" and nothing is using it
 
-The checkout is owned by `neema`. Git refuses to operate on a repository owned
-by someone else and says so:
+This box has produced `failed to bind host port 127.0.0.1:NNNN/tcp: address
+already in use` on 3001, 3005 and 3013 — including a port that had never been
+tried before — while `ss -ltnp` showed nothing listening, `lsof` found nothing
+and `docker ps -a` was empty.
+
+Run the diagnostic rather than trying another number:
+
+```bash
+cd /srv/nuruplace
+sudo ./scripts/port-doctor.sh          # or: sudo ./scripts/port-doctor.sh 3013
+```
+
+It distinguishes the four causes, because they have different fixes and look
+identical from the error message:
+
+| | Tell | Fix |
+|---|---|---|
+| Bound, but not LISTENing | `ss -tnpa` shows it, `ss -ltnp` does not | find the owner |
+| Inside the **ephemeral range** | `ip_local_port_range` covers the port | reserve it (below) |
+| Deploy timer racing you | `nuruplace-deploy.timer` is active | `systemctl stop` it first |
+| Leaked endpoint | stale container or `docker-proxy` | remove it |
+
+The second is the one worth understanding, because it is invisible after the
+fact and it is why trying a fresh port did not help. If
+`net.ipv4.ip_local_port_range` has been widened downward on this box, the
+kernel can hand out 3013 as the **source** port of an outbound connection —
+and a mail server makes a great many outbound connections. `bind()` then fails
+with EADDRINUSE, the connection closes a moment later, and by the time you
+look the port is free. Every port in the range is a coin flip. Reserve it:
+
+```bash
+sudo sysctl -w net.ipv4.ip_local_reserved_ports=3013
+echo 'net.ipv4.ip_local_reserved_ports = 3013' \
+  | sudo tee /etc/sysctl.d/60-nuruplace-port.conf
+```
+
+That takes effect immediately, survives reboot, and does not touch the mail
+server or the Docker daemon.
+
+**Do not restart the Docker daemon to clear this.** The church's mail server
+runs in Docker on this box — ports 25, 110, 143, 465, 587, 993, 995 and 4190.
+A restart to fix a website takes the church's email down with it.
+
+### Last resort: no host port at all
+
+If the allocator will not hand out any port (`port-doctor.sh` step 5 fails
+too), stop fighting it. `docker-compose.direct.yml` gives the container a
+fixed address on its own bridge and publishes nothing:
+
+```bash
+docker compose -f docker-compose.direct.yml up -d web
+curl -s -o /dev/null -w '%{http_code}\n' http://172.29.0.2:3000/healthz
+```
+
+Then point nginx at `172.29.0.2:3000` instead of `127.0.0.1:NNNN`, and tell
+the deploy timer to use the same file:
+
+```bash
+sudo -u nuruplace tee -a /srv/nuruplace/.env >/dev/null <<'ENV'
+COMPOSE_FILES=docker-compose.direct.yml
+HEALTH_URL=http://172.29.0.2:3000/healthz
+ENV
+```
+
+Check the subnet is free first — `docker network inspect $(docker network ls -q)
+| grep Subnet` — and change `WEB_SUBNET`/`WEB_IP` in `.env` if 172.29.0.0/24 is
+taken. This is not worse than a published port for our purposes; it is only
+less conventional, and nginx reaches a bridge address exactly as easily.
+
+## Always run git as `nuruplace`, never as root
+
+The checkout is owned by `nuruplace`. Git refuses to operate on a repository
+owned by someone else and says so:
 
 ```
-fatal: detected dubious ownership in repository at '/home/neema/nuruplace'
+fatal: detected dubious ownership in repository at '/srv/nuruplace'
 ```
 
 That is a **failure**, not a warning. If you typed several commands at once,
@@ -92,7 +153,7 @@ echo 'WEB_PORT=3013' >> .env                     # creates a root-owned file
 sudo chown nuruplace:nuruplace .env              # or the timer cannot read it
 ```
 
-## Moving an existing checkout out of `/home/neema`
+## Moving an existing checkout out of `/home/neema` (done, kept for reference)
 
 Early instructions put the checkout at `/home/neema/nuruplace`. Nothing depends
 on that path except the systemd unit, so relocating is cheap — and the image,
@@ -181,7 +242,7 @@ until you are satisfied. Nothing about the old site is deleted by any of this.
 Every build is also tagged with its commit sha:
 
 ```bash
-cd /home/neema/nuruplace
+cd /srv/nuruplace
 IMAGE_TAG=<sha> docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d web
 ```
 
