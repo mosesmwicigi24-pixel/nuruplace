@@ -263,8 +263,8 @@ npm run test:a11y        # accessibility only
 ```
 
 The suite builds and serves the production output itself — no dev server, so
-what it measures is what visitors get. GitHub Actions runs it on every push and
-pull request.
+what it measures is what visitors get. GitHub Actions runs it on every pull
+request, and again as the gate in front of every deploy to main.
 
 320px is deliberately the floor. Low-end Androids are common in Nairobi, and
 they belong to exactly the people this church most wants to reach.

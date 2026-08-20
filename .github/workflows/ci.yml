@@ -1,17 +1,27 @@
 name: CI
 
-# Runs on every push and pull request. Responsiveness and accessibility are
-# checked by machine here so nobody has to remember to resize a browser.
+# The quality gate. Responsiveness and accessibility are checked by machine
+# here so nobody has to remember to resize a browser.
+#
+# Why no bare `push:` trigger. Between `pull_request` here and deploy.yml
+# calling this workflow on main, every commit that can ship is already covered.
+# Adding `push` on top fires this workflow TWICE for one commit, and the two
+# runs then share a concurrency group and cancel each other — leaving a
+# cancelled, red-looking check against a commit that actually passed. Observed
+# on 4c00fbb, and previously documented in neema-ai/.github/workflows/deploy.yml
+# after the same mistake.
 on:
-  push:
-    branches: [main]
   pull_request:
   # Called by deploy.yml as the gate in front of the GHCR push, so a red suite
   # means no image is ever built for main.
   workflow_call:
+  workflow_dispatch:
 
+# Supersede in-flight runs for the same ref. `github.workflow` is part of the
+# key on purpose: inside a reusable call it resolves to the CALLER's name
+# ("Build & Push"), so a standalone CI run can never cancel the deploy gate.
 concurrency:
-  group: ci-${{ github.head_ref || github.ref_name }}
+  group: ${{ github.workflow }}-ci-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 permissions:
