@@ -1,5 +1,5 @@
 import "server-only";
-import { createHmac } from "node:crypto";
+import { createHash, createHmac } from "node:crypto";
 
 /**
  * Where a submitted form actually goes.
@@ -31,7 +31,46 @@ export type ContactSubmission = {
   /** Set when they ticked "I'm planning to visit". */
   planningVisit: boolean;
   submittedAt: string;
+  /**
+   * Idempotency key (§3.6 of the Pathway spec). Derived from the submission's
+   * own content, so a retry after a timeout — or a visitor who saw no
+   * confirmation and pressed send again — is recognised as the same message
+   * rather than becoming a second one a pastor answers twice.
+   *
+   * Content-derived rather than random precisely so a RETRY matches: a fresh
+   * uuid per attempt would defeat the whole mechanism. A genuinely new message
+   * differs in `submittedAt` and so gets its own key.
+   */
+  dedupeKey?: string;
 };
+
+/**
+ * A stable fingerprint of one submission.
+ *
+ * Truncated to 32 hex characters: the receiving column is VARCHAR(64), and 128
+ * bits is far past the point where a collision between two church enquiries is
+ * a thing that happens.
+ *
+ * Fields are joined on NUL rather than a space, and that is not fussiness. A
+ * collision here does not produce a duplicate — it produces a SILENT DROP,
+ * because the receiver treats a repeated key as "already have this one". With a
+ * space separator a boundary can shift between adjacent fields ("A" + "B C"
+ * joins to the same string as "A B" + "C"), so two genuinely different messages
+ * could hash alike and the second person would never be answered. NUL cannot
+ * appear in any of these values, so the class of bug goes away rather than
+ * merely becoming unlikely.
+ */
+const SEP = "\u0000";
+export function dedupeKeyFor(
+  s: Omit<ContactSubmission, "dedupeKey">,
+): string {
+  return createHash("sha256")
+    .update(
+      [s.kind, s.name, s.phone ?? "", s.email ?? "", s.message, s.submittedAt].join(SEP),
+    )
+    .digest("hex")
+    .slice(0, 32);
+}
 
 /**
  * Sign the payload so the receiver can tell it came from this website.
@@ -108,7 +147,12 @@ export async function deliver(submission: ContactSubmission): Promise<void> {
   }
 
   if (webhook) {
-    const body = JSON.stringify(submission);
+    // Always send a key. The receiver only dedupes when one is present, so
+    // omitting it would quietly turn idempotency off.
+    const body = JSON.stringify({
+      ...submission,
+      dedupeKey: submission.dedupeKey ?? dedupeKeyFor(submission),
+    });
     const res = await fetch(webhook, {
       method: "POST",
       headers: {
