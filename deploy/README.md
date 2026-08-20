@@ -43,6 +43,36 @@ docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d web
 `scripts/box-deploy.sh`. It does **not** drive nginx — update the `upstream`
 block in `deploy/nginx/nuruplace.org.conf` to match, then reload nginx.
 
+## Always run git as `neema`, never as root
+
+The checkout is owned by `neema`. Git refuses to operate on a repository owned
+by someone else and says so:
+
+```
+fatal: detected dubious ownership in repository at '/home/neema/nuruplace'
+```
+
+That is a **failure**, not a warning. If you typed several commands at once,
+the ones after it still ran — against the old code — which produces errors that
+look like the thing you were trying to fix and are not.
+
+```bash
+sudo -u neema git pull          # right
+git pull                        # wrong, as root
+```
+
+`scripts/box-deploy.sh` already does this correctly (`sudo -u "$OWNER" git …`),
+so automatic deploys are unaffected. It only bites manual commands.
+
+Adding `safe.directory` for root would silence it, but then root-run git leaves
+root-owned objects in a `neema`-owned tree and the timer breaks later. Run git
+as the owner instead. The same applies to `.env`:
+
+```bash
+echo 'WEB_PORT=3005' >> .env               # creates a root-owned file
+sudo chown neema:neema .env                # fix it, or the timer cannot read it
+```
+
 ## One-time setup on the box
 
 ```bash
@@ -57,6 +87,11 @@ ENV
 # 3. First pull and start
 cd /home/neema/nuruplace
 docker compose -f docker-compose.yml -f docker-compose.vps.yml pull web
+
+# Prove the port actually resolved before starting anything — this is the step
+# that catches a stale checkout or a misspelled .env, and it costs one second.
+docker compose -f docker-compose.yml -f docker-compose.vps.yml config | grep -A3 'ports:'
+
 docker compose -f docker-compose.yml -f docker-compose.vps.yml up -d web
 curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:"${WEB_PORT:-3001}"/healthz   # expect 200
 
