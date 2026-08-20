@@ -49,8 +49,31 @@ Default `3001` — port 3000 belongs to neema-ai's web container. Published on
 except through nginx.
 
 `WEB_PORT` drives the compose binding **and** the health gate in
-`scripts/box-deploy.sh`. It does **not** drive nginx — update the `upstream`
-block in `deploy/nginx/nuruplace.org.conf` to match, then reload nginx.
+`scripts/box-deploy.sh`. It does **not** drive nginx, and nothing enforces
+agreement between them. When they drift, the container is healthy, the deploy
+reports success, and every visitor gets 502 — the failure lands in the one
+place nobody is watching. Check it:
+
+```bash
+./scripts/check-nginx.sh
+```
+
+## Never edit the checkout on the box
+
+`box-deploy.sh` runs `git reset --hard origin/main` every two minutes. Any
+hand edit to a **tracked** file under `/srv/nuruplace` is reverted, usually
+before you have finished testing it — including the nginx config, the compose
+files and the scripts.
+
+```bash
+sudo sed -i s/3001/3013/ deploy/nginx/nuruplace.org.conf   # gone in <2 min
+```
+
+Change it in the repo and push; the box pulls it. Two things are exempt
+because they are not tracked: `.env`, and the installed nginx block at
+`/etc/nginx/sites-available/nuruplace.org`. Editing that installed copy works
+but leaves it silently disagreeing with source — `check-nginx.sh` compares
+both against `.env` for exactly that reason.
 
 ## When the port is "already in use" and nothing is using it
 
