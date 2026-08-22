@@ -41,4 +41,11 @@ export const pages = [
   { path: "/en/videos", name: "videos-en" },
   { path: "/sw/resources", name: "resources-sw" },
   { path: "/en/shop", name: "shop-en" },
+  // Giving, in both languages, because this page is mostly form — the one
+  // template where a label wrapping badly or a tap target shrinking has a cost
+  // measured in gifts nobody managed to complete. Without PATHWAY_API_URL set,
+  // what renders is the honest "not switched on" panel, which is itself worth
+  // checking: it is what visitors see until the church configures the secret.
+  { path: "/en/give", name: "give-en" },
+  { path: "/sw/give", name: "give-sw" },
 ] as const;

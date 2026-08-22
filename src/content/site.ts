@@ -20,7 +20,10 @@ export const site = {
     city: "Nairobi, Kenya",
   },
   giving: {
+    // The mission's own funding site. Since /give exists this is a FALLBACK,
+    // shown when M-Pesa giving is not switched on — not the main path.
     url: "https://funding.thegoodnewsmission.org",
+    label: "Give at funding.thegoodnewsmission.org",
     causesUrl: "https://funding.thegoodnewsmission.org/causes",
   },
   socials: [

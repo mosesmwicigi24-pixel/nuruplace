@@ -91,6 +91,46 @@ export type Dictionary = {
     errFailed: string;
     orCall: string;
   };
+  give: {
+    title: string;
+    lede: string;
+    scripture: string;
+    scriptureRef: string;
+    fund: string;
+    amount: string;
+    amountHint: string;
+    quickAmounts: string;
+    otherAmount: string;
+    phone: string;
+    phoneHint: string;
+    name: string;
+    nameHint: string;
+    email: string;
+    emailHint: string;
+    submit: string;
+    submitting: string;
+    /** Confirmation. `sentBody` carries a {phone} placeholder. */
+    sent: string;
+    sentBody: string;
+    sentNote: string;
+    giveAgain: string;
+    howItWorks: string;
+    step1: string;
+    step2: string;
+    step3: string;
+    privacy: string;
+    errAmountRequired: string;
+    errAmountRange: string;
+    errPhoneRequired: string;
+    errFundRequired: string;
+    errTooLong: string;
+    errNotConfigured: string;
+    /** `errThrottled` carries a {minutes} placeholder. */
+    errThrottled: string;
+    errFailed: string;
+    unavailable: string;
+    unavailableBody: string;
+  };
   home: {
     heroTitle: string;
     heroBody: string;
@@ -225,6 +265,50 @@ const en: Dictionary = {
     errNotConfigured: "We cannot send this from the website just yet. Please call or WhatsApp us instead — we do not want to lose your message.",
     errFailed: "Something went wrong sending that. Please try again, or call or WhatsApp us.",
     orCall: "Or reach us directly",
+  },
+  give: {
+    title: "Give",
+    lede: "Give from wherever you are. Enter an amount and your M-Pesa number, and your phone will ask you to confirm.",
+    scripture:
+      "Each of you should give what you have decided in your heart to give, not reluctantly or under compulsion, for God loves a cheerful giver.",
+    scriptureRef: "2 Corinthians 9:7",
+    fund: "What is this gift for?",
+    amount: "Amount",
+    amountHint: "Kenyan shillings.",
+    quickAmounts: "Choose an amount",
+    otherAmount: "Other",
+    phone: "M-Pesa number",
+    phoneHint: "The number that will receive the payment request — for example 0722 000 111.",
+    name: "Your name",
+    nameHint: "Optional. It appears on the church's M-Pesa statement, which is how the treasurer can thank you.",
+    email: "Email",
+    emailHint: "Optional. Only used if the church needs to reach you about this gift.",
+    submit: "Give",
+    submitting: "Sending to your phone…",
+    sent: "Check your phone",
+    sentBody: "We have sent a payment request to {phone}. Enter your M-Pesa PIN to complete the gift.",
+    sentNote:
+      "If nothing arrives within a minute or two, the request may have expired — you can try again, or give directly to the church Paybill.",
+    giveAgain: "Give again",
+    howItWorks: "How this works",
+    step1: "You enter an amount and your M-Pesa number here.",
+    step2: "Safaricom sends a payment request to your phone.",
+    step3: "You enter your M-Pesa PIN on your own handset. Your PIN is never typed on this website.",
+    privacy:
+      "We keep your number and the amount so the church can account for the gift. We do not share either with anyone else.",
+    errAmountRequired: "Please enter an amount, in shillings.",
+    errAmountRange: "Please enter between KES 10 and KES 150,000. M-Pesa cannot send more than that in one payment.",
+    errPhoneRequired: "Please enter a Kenyan mobile number, like 0722 000 111.",
+    errFundRequired: "Please choose what the gift is for.",
+    errTooLong: "That name or email is longer than we can accept.",
+    errNotConfigured:
+      "Giving from the website is not switched on yet. Please give through the Nuru Pathway app, or call us and we will help.",
+    errThrottled:
+      "We have already sent a few requests to that number. Please wait about {minutes} minutes before trying again.",
+    errFailed: "Something went wrong sending that. Please try again, or call us.",
+    unavailable: "Giving from the website is not available right now",
+    unavailableBody:
+      "You can still give through the Nuru Pathway app, or in person on Sunday. Call us if you would like help.",
   },
   home: {
     heroTitle: "You're Welcome Here",
@@ -367,6 +451,50 @@ const sw: Dictionary = {
     errNotConfigured: "Hatuwezi kutuma hii kutoka tovuti kwa sasa. Tafadhali tupigie simu au WhatsApp badala yake — hatutaki kupoteza ujumbe wako.",
     errFailed: "Kuna hitilafu wakati wa kutuma. Tafadhali jaribu tena, au tupigie simu au WhatsApp.",
     orCall: "Au wasiliana nasi moja kwa moja",
+  },
+  give: {
+    title: "Toa",
+    lede: "Toa ukiwa popote ulipo. Weka kiasi na nambari yako ya M-Pesa, na simu yako itakuomba uthibitishe.",
+    scripture:
+      "Kila mtu na atoe kama alivyokusudia moyoni mwake, si kwa huzuni wala kwa kulazimishwa, maana Mungu humpenda yeye atoaye kwa moyo mkunjufu.",
+    scriptureRef: "2 Wakorintho 9:7",
+    fund: "Zawadi hii ni ya nini?",
+    amount: "Kiasi",
+    amountHint: "Shilingi za Kenya.",
+    quickAmounts: "Chagua kiasi",
+    otherAmount: "Kingine",
+    phone: "Nambari ya M-Pesa",
+    phoneHint: "Nambari itakayopokea ombi la malipo — kwa mfano 0722 000 111.",
+    name: "Jina lako",
+    nameHint: "Si lazima. Linaonekana kwenye taarifa ya M-Pesa ya kanisa, ndiyo njia ya mweka hazina kukushukuru.",
+    email: "Barua pepe",
+    emailHint: "Si lazima. Hutumika tu iwapo kanisa linahitaji kukufikia kuhusu zawadi hii.",
+    submit: "Toa",
+    submitting: "Tunatuma kwa simu yako…",
+    sent: "Angalia simu yako",
+    sentBody: "Tumetuma ombi la malipo kwa {phone}. Weka PIN yako ya M-Pesa ili kukamilisha.",
+    sentNote:
+      "Kama hakuna kitakachofika ndani ya dakika moja au mbili, huenda ombi limeisha muda — unaweza kujaribu tena, au kutoa moja kwa moja kupitia Paybill ya kanisa.",
+    giveAgain: "Toa tena",
+    howItWorks: "Jinsi inavyofanya kazi",
+    step1: "Unaweka kiasi na nambari yako ya M-Pesa hapa.",
+    step2: "Safaricom hutuma ombi la malipo kwenye simu yako.",
+    step3: "Unaweka PIN yako ya M-Pesa kwenye simu yako mwenyewe. PIN yako haiandikwi kamwe kwenye tovuti hii.",
+    privacy:
+      "Tunahifadhi nambari yako na kiasi ili kanisa liweze kuhesabu zawadi hiyo. Hatushiriki chochote kati ya hivyo na mtu mwingine.",
+    errAmountRequired: "Tafadhali weka kiasi, kwa shilingi.",
+    errAmountRange: "Tafadhali weka kati ya KES 10 na KES 150,000. M-Pesa haiwezi kutuma zaidi ya hapo kwa malipo moja.",
+    errPhoneRequired: "Tafadhali weka nambari ya simu ya Kenya, kama 0722 000 111.",
+    errFundRequired: "Tafadhali chagua zawadi hii ni ya nini.",
+    errTooLong: "Jina au barua pepe hiyo ni ndefu kuliko tunavyoweza kupokea.",
+    errNotConfigured:
+      "Kutoa kupitia tovuti bado hakujaanzishwa. Tafadhali toa kupitia programu ya Nuru Pathway, au tupigie simu na tutakusaidia.",
+    errThrottled:
+      "Tayari tumetuma maombi machache kwa nambari hiyo. Tafadhali subiri kama dakika {minutes} kabla ya kujaribu tena.",
+    errFailed: "Kuna hitilafu iliyotokea. Tafadhali jaribu tena, au tupigie simu.",
+    unavailable: "Kutoa kupitia tovuti hakupatikani kwa sasa",
+    unavailableBody:
+      "Bado unaweza kutoa kupitia programu ya Nuru Pathway, au ana kwa ana siku ya Jumapili. Tupigie simu ukihitaji msaada.",
   },
   home: {
     heroTitle: "Umekaribishwa Hapa",

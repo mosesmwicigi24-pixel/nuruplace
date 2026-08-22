@@ -180,7 +180,7 @@ export default async function HomePage({ params }: Props) {
             {home.givingBody}
           </p>
           <div className="btn-group row-center" style={{ marginTop: "var(--s-8)" }}>
-            <Button href={site.giving.url} variant="outline" external>
+            <Button href={p("/give")} variant="outline">
               {common.giveNow}
             </Button>
             <Button href={site.giving.causesUrl} variant="outline" external>

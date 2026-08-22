@@ -26,13 +26,30 @@ export default defineConfig({
   },
   webServer: process.env.BASE_URL
     ? undefined
-    : {
-        command: "npm run build && npm run start -- --port 3100",
-        url: "http://127.0.0.1:3100/en",
-        // Never reuse: a server left running from an earlier build serves stale
-        // HTML against a fresh .next, which produces failures that look like
-        // real regressions and are not. The suite has to tell the truth.
-        reuseExistingServer: false,
-        timeout: 240_000,
-      },
+    : [
+        // A stand-in for the Pathway API, started FIRST so the site can read
+        // the funds list while it renders. Without it PATHWAY_API_URL is unset,
+        // /give falls back to its "not switched on yet" panel, and the
+        // accessibility and responsive checks pass having never seen an input —
+        // a green report about a page that was not the page under test.
+        {
+          command: "node tests/stub-pathway.mjs",
+          url: "http://127.0.0.1:3111/v1/giving/funds",
+          reuseExistingServer: false,
+          timeout: 30_000,
+        },
+        {
+          command: "npm run build && npm run start -- --port 3100",
+          url: "http://127.0.0.1:3100/en",
+          // Never reuse: a server left running from an earlier build serves stale
+          // HTML against a fresh .next, which produces failures that look like
+          // real regressions and are not. The suite has to tell the truth.
+          reuseExistingServer: false,
+          timeout: 240_000,
+          env: {
+            PATHWAY_API_URL: "http://127.0.0.1:3111/v1",
+            PATHWAY_GIVING_SECRET: "playwright-giving-secret",
+          },
+        },
+      ],
 });
