@@ -27,6 +27,18 @@ const FUNDS = [
   { code: "mission", name: "Missions" },
 ];
 
+/**
+ * What the status endpoint will say about each gift this stub created.
+ *
+ * The real API reads the ledger; here the outcome is chosen from the giver's
+ * number so a test can reach every branch:
+ *   …777  the gift fails (cancelled on the handset)
+ *   …666  it never resolves (the push expires)
+ *   any other  it succeeds
+ */
+const STATUS_BY_TXN = new Map();
+let seq = 0;
+
 const json = (res, status, body) => {
   const payload = JSON.stringify(body);
   res.writeHead(status, { "content-type": "application/json", "content-length": Buffer.byteLength(payload) });
@@ -59,6 +71,31 @@ const server = createServer((req, res) => {
     });
   }
 
+  // "Has it landed yet?" — what turns "check your phone" into "thank you".
+  // The outcome is driven by the number that gave, so a browser test can reach
+  // each branch on demand; the real API decides it from the ledger.
+  if (req.method === "POST" && url.pathname === "/v1/webhooks/website-giving/status") {
+    let raw = "";
+    req.on("data", (c) => (raw += c));
+    req.on("end", () => {
+      if (!signatureValid(req.headers["x-nuruplace-signature"], raw)) {
+        return json(res, 401, { error: { code: "AUTH_REQUIRED", message: "Signature does not match" } });
+      }
+      const { transaction_id: id } = JSON.parse(raw);
+      const outcome = STATUS_BY_TXN.get(id);
+      if (!outcome) return json(res, 404, { error: { code: "NOT_FOUND", message: "unknown gift" } });
+      return json(res, 200, {
+        status: outcome.status,
+        amount_minor: outcome.amount_minor,
+        currency: "KES",
+        fund: "Offering",
+        receipt_code: outcome.status === "succeeded" ? "SJ12ABC345" : null,
+        settled_at: outcome.status === "succeeded" ? new Date(0).toISOString() : null,
+      });
+    });
+    return;
+  }
+
   if (req.method === "POST" && url.pathname === "/v1/webhooks/website-giving") {
     let raw = "";
     req.on("data", (c) => (raw += c));
@@ -84,10 +121,18 @@ const server = createServer((req, res) => {
           error: { code: "VALIDATION_FAILED", message: "That amount is above the M-Pesa limit for one payment" },
         });
       }
+      // A distinct id per gift, and a remembered outcome the status endpoint
+      // will report. Driven by the last digits of the number so a browser test
+      // can ask for a success, a refusal, or a gift that never resolves.
+      seq += 1;
+      const id = `00000000-0000-4000-8000-${String(seq).padStart(12, "0")}`;
+      const phone = String(body.phone_number);
+      const status = phone.endsWith("777") ? "failed" : phone.endsWith("666") ? "processing" : "succeeded";
+      STATUS_BY_TXN.set(id, { status, amount_minor: body.amount_minor });
       return json(res, 201, {
-        transaction_id: "00000000-0000-4000-8000-000000000001",
+        transaction_id: id,
         provider: "mpesa",
-        provider_ref: "stub_stk_1",
+        provider_ref: `stub_stk_${seq}`,
         status: "processing",
         idempotency_key: body.idempotency_key,
         reused: false,

@@ -201,6 +201,52 @@ export async function sendGift(gift: Gift): Promise<{ transactionId: string }> {
   return { transactionId: out.transaction_id ?? "" };
 }
 
+export type GiftStatus = {
+  status: "processing" | "succeeded" | "failed" | "refunded" | "requires_action";
+  amount_minor: number;
+  currency: string;
+  fund: string | null;
+  receipt_code: string | null;
+  settled_at: string | null;
+};
+
+/**
+ * Has the gift landed yet?
+ *
+ * The page asks this while the giver is at their handset, so it can stop saying
+ * "check your phone" and say thank you instead. Signed like everything else we
+ * send, because it reads from the ledger.
+ *
+ * Returns null when we cannot TELL — a timeout, a 429, a network blip. The
+ * caller keeps waiting rather than announcing a failure it has not established:
+ * telling someone their gift failed when it merely could not be checked is the
+ * worst of the available wrong answers, and they have already paid.
+ */
+export async function fetchGiftStatus(transactionId: string): Promise<GiftStatus | null> {
+  const base = givingBase();
+  const secret = process.env.PATHWAY_GIVING_SECRET?.trim();
+  if (!base || !secret) return null;
+
+  const body = JSON.stringify({ transaction_id: transactionId });
+  try {
+    const res = await fetch(`${base}/webhooks/website-giving/status`, {
+      method: "POST",
+      headers: { "content-type": "application/json", ...signatureHeaders(body) },
+      body,
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!res.ok) {
+      // 429 means the poller is asking too often, not that the gift failed.
+      if (res.status !== 429) console.error(`[giving] status lookup returned ${res.status}`);
+      return null;
+    }
+    return (await res.json()) as GiftStatus;
+  } catch (err) {
+    console.error("[giving] status lookup failed:", err);
+    return null;
+  }
+}
+
 // The two parsers live in ./money so a plain node script can execute their
 // assertions — this module imports `server-only` and cannot be. Re-exported so
 // callers have one place to import giving from.

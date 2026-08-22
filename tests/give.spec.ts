@@ -60,6 +60,52 @@ test.describe("giving from the website", () => {
     await expect(page.getByText("+254722000111")).toBeVisible();
   });
 
+  test("the flow CLOSES — it thanks the giver once the gift settles", async ({ page }) => {
+    // The gap this fixes: the page used to stop at "check your phone" and stay
+    // there forever. Someone paid and the site never acknowledged it.
+    await page.goto(GIVE, { waitUntil: "networkidle" });
+    await fill(page, { amount: "500", phone: "0722000111" });
+    await page.getByRole("button", { name: /^Give$/ }).click();
+    await expect(page.getByText("Check your phone")).toBeVisible();
+
+    await expect(page.getByRole("heading", { name: "Thank you" })).toBeVisible({ timeout: 15_000 });
+    // Their own figure, in the units they typed.
+    await expect(page.getByText(/KES 500\.00/)).toBeVisible();
+    await expect(page.getByText(/Offering/)).toBeVisible();
+    // The M-Pesa code, so it can be matched against Safaricom's message.
+    await expect(page.getByText(/SJ12ABC345/)).toBeVisible();
+    await expect(page.getByText(/2 Corinthians 9:8/)).toBeVisible();
+  });
+
+  test("a cancelled gift says so, and does not claim money was taken", async ({ page }) => {
+    // …777 makes the stub report a failed gift.
+    await page.goto(GIVE, { waitUntil: "networkidle" });
+    await fill(page, { amount: "500", phone: "0722000777" });
+    await page.getByRole("button", { name: /^Give$/ }).click();
+    await expect(page.getByRole("heading", { name: /did not go through/i })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText(/Nothing has been taken/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+  });
+
+  test("a gift that never resolves keeps waiting rather than claiming failure", async ({ page }) => {
+    // …666 stays processing forever. Someone whose money may yet leave must not
+    // be told it failed.
+    await page.goto(GIVE, { waitUntil: "networkidle" });
+    await fill(page, { amount: "500", phone: "0722000666" });
+    await page.getByRole("button", { name: /^Give$/ }).click();
+    await expect(page.getByText(/Waiting for your confirmation/i)).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole("heading", { name: "Thank you" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: /did not go through/i })).toHaveCount(0);
+  });
+
+  test("Swahili closes the loop too", async ({ page }) => {
+    await page.goto("/sw/give", { waitUntil: "networkidle" });
+    await page.getByLabel(/^Kiasi/).fill("500");
+    await page.getByLabel(/Nambari ya M-Pesa/).fill("0722000111");
+    await page.getByRole("button", { name: /^Toa$/ }).click();
+    await expect(page.getByRole("heading", { name: "Asante" })).toBeVisible({ timeout: 15_000 });
+  });
+
   test("a number that is not a Kenyan mobile is refused before anything is sent", async ({ page }) => {
     await page.goto(GIVE, { waitUntil: "networkidle" });
     await fill(page, { amount: "500", phone: "020 123456" }); // a landline
