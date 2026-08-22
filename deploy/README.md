@@ -245,9 +245,16 @@ sudo usermod -aG docker nuruplace          # only if you want non-root compose
 
 sudo -u nuruplace git clone https://github.com/mosesmwicigi24-pixel/nuruplace.git /srv/nuruplace
 
-# 2. Contact-form destination (the form refuses to submit without one)
+# 2. Destinations. Both forms REFUSE rather than silently drop, so an unset
+#    value here shows up as an honest "please call us" on the site, not as a
+#    message or a gift that quietly went nowhere.
+#
+#    PATHWAY_GIVING_SECRET must equal the API's WEBSITE_GIVING_WEBHOOK_SECRET.
+#    Generate it once with:  openssl rand -hex 32
 sudo -u nuruplace tee /srv/nuruplace/.env >/dev/null <<'ENV'
 CONTACT_WEBHOOK_URL=https://…            # or the CONTACT_EMAIL_* trio
+PATHWAY_API_URL=https://pathway.nuruplace.org/v1
+PATHWAY_GIVING_SECRET=…                  # both, or /give stays switched off
 WEB_PORT=3013                            # a port nothing else on this box uses
 ENV
 

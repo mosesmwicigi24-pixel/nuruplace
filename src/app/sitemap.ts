@@ -23,6 +23,7 @@ const paths = [
   "/gallery",
   "/videos",
   "/resources",
+  "/give",
   "/contact-us",
   ...ministries.map((m) => `/ministries/${m.slug}`),
   ...posts.map((p) => `/blog/${p.slug}`),

@@ -14,6 +14,11 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
+    // scripts/check-giving.ts runs under `node --experimental-strip-types`,
+    // which strips types but does no module resolution — so its import has to
+    // name the real file, extension and all. Safe here because noEmit is on:
+    // this only affects what tsc will typecheck, never what ships.
+    "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,

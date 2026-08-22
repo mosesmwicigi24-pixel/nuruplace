@@ -77,14 +77,12 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           </nav>
 
           <div className="header-actions">
-            <a
-              href={site.giving.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-accent btn-give"
-            >
+            {/* Our own page now, not the external funding site. /give still
+                offers that link when M-Pesa giving is not switched on, so no
+                existing way of giving is lost by routing through here. */}
+            <Link href={localePath(locale, "/give")} className="btn btn-accent btn-give">
               {dict.common.give}
-            </a>
+            </Link>
             <MobileNav locale={locale} />
           </div>
         </div>

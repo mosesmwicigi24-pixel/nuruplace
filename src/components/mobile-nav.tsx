@@ -3,9 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { getMainNav, site } from "@/content/site";
+import { getMainNav } from "@/content/site";
 import { getDictionary } from "@/i18n/dictionary";
-import type { Locale } from "@/i18n/config";
+import { localePath, type Locale } from "@/i18n/config";
 import { LanguageSwitcher } from "./language-switcher";
 
 export function MobileNav({ locale }: { locale: Locale }) {
@@ -57,15 +57,14 @@ export function MobileNav({ locale }: { locale: Locale }) {
               </li>
             ))}
           </ul>
-          <a
-            href={site.giving.url}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href={localePath(locale, "/give")}
             className="btn btn-accent btn-block"
             style={{ marginTop: "var(--s-4)" }}
+            onClick={() => setOpen(false)}
           >
             {dict.common.give}
-          </a>
+          </Link>
         </div>
       )}
     </div>

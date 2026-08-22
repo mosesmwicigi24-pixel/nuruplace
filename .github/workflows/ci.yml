@@ -52,6 +52,15 @@ jobs:
       - name: Compose port bindings
         run: ./scripts/check-compose.sh
 
+      # Two pure functions with a cost when they are quietly wrong: a phone
+      # parser that accepts a landline sends a payment request nobody can
+      # answer, and an amount parser routed through a float loses a cent on
+      # 2.01, 10.03 and 512.05 — a ledger that will not reconcile, and nobody
+      # notices until the treasurer does. The script self-tests that it is
+      # capable of failing before reporting that it passed.
+      - name: Giving parsers
+        run: npm run check:giving
+
       - name: Build
         run: npm run build
 

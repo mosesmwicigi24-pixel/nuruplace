@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "stats": "node scripts/stats.mjs",
+    "check:giving": "node --experimental-strip-types scripts/check-giving.ts",
     "test": "playwright test",
     "test:responsive": "playwright test tests/responsive.spec.ts",
     "test:a11y": "playwright test tests/accessibility.spec.ts"
