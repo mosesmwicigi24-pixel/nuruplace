@@ -763,10 +763,32 @@ code {
 }
 
 .hero-photo { position: absolute; inset: 0; }
-.hero-photo img { width: 100%; height: 100%; object-fit: cover; opacity: 0.35; }
-.hero-photo::after { content: ""; position: absolute; inset: 0; background: rgb(11 16 32 / 55%); }
 
-.hero-inner { position: relative; padding-block: clamp(4.5rem, 8vw, 9rem); text-align: center; }
+/* The photograph is the point now, so it is nearly opaque. It used to sit at
+   0.35 under a flat 55% scrim — a treatment written when the hero was a
+   gradient and a photograph was incidental. Together those two layers left a
+   congregation barely visible behind its own welcome. */
+.hero-photo img { width: 100%; height: 100%; object-fit: cover; opacity: 0.92; }
+
+/* A shaped scrim rather than a flat one: darkest through the middle band where
+   the words sit, easing off at top and bottom so faces and the room stay
+   readable. Flat dimming has to be heavy enough for the WORST pixel behind the
+   text, which means dimming every other pixel just as hard. */
+.hero-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    /* 50%, not 34%, at the outer stop. The two gradients stack, so the weakest
+       combined point was 0.47 alpha — and white text over a blown-out pixel there
+       measured 3.82:1, under the 4.5:1 floor. 0.50 puts the worst case at
+       5.75:1 while still leaving the photograph about twice as bright as the
+       treatment it replaced. Computed, not eyeballed. */
+    radial-gradient(ellipse 95% 75% at 50% 50%, rgb(9 12 28 / 78%), rgb(9 12 28 / 50%) 78%),
+    linear-gradient(to bottom, rgb(9 12 28 / 42%), rgb(9 12 28 / 20%) 40%, rgb(9 12 28 / 52%));
+}
+
+.hero-inner { position: relative; padding-block: clamp(5rem, 8vw, 9.5rem); text-align: center; }
 
 .not-found { max-width: 40rem; margin-inline: auto; padding-block: var(--s-16); text-align: center; }
 .not-found .code { font-family: var(--font-display); font-size: 3rem; color: var(--brand-600); }
@@ -1104,4 +1126,47 @@ code {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* ─── Hero carousel typography ───────────────────────────────────────────── */
+/* The hero headline was inheriting .t-hero's full range with no width limit, so
+   on a wide screen it ran the entire 1920px shell as one long line. Size was
+   never the problem — measure was. A short line of large type reads; a long one
+   of the same size does not, and the eye loses the start of the next line.
+   ~16ch forces "You're Welcome Here" to break where a person would break it. */
+.hero-inner .t-hero {
+  max-width: 16ch;
+  margin-inline: auto;
+  /* Slightly tighter at the top end than the page default: a headline over a
+     photograph competes with the photograph, and 5rem was winning too hard. */
+  font-size: clamp(2.125rem, 1.1rem + 4.2vw, 4.25rem);
+  text-wrap: balance;
+}
+
+/* Scripture runs long, so it gets a wider measure than a headline would —
+   but still nothing like the full shell. */
+.hero-inner .hero-quote-text {
+  max-width: 26ch;
+  margin-inline: auto;
+  font-size: clamp(1.5rem, 0.95rem + 2.4vw, 2.875rem);
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.hero-inner .eyebrow {
+  letter-spacing: 0.14em;
+  font-size: clamp(0.75rem, 0.7rem + 0.2vw, 0.9375rem);
+}
+
+/* Lead paragraph: 56ch is right for body copy on a light page, but over a
+   photograph a shorter line holds together better. */
+.hero-inner .t-lead {
+  max-width: 46ch;
+}
+
+/* On a short landscape phone the hero would otherwise eat the whole viewport
+   and the visitor never learns there is a page below it. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .hero-inner { padding-block: var(--s-10); }
+  .hero-inner .t-hero { font-size: clamp(1.75rem, 4vw, 2.5rem); }
 }
