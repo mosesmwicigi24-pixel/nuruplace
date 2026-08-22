@@ -25,6 +25,13 @@ services:
       CONTACT_EMAIL_API: ${CONTACT_EMAIL_API:-}
       CONTACT_EMAIL_KEY: ${CONTACT_EMAIL_KEY:-}
       CONTACT_EMAIL_FROM: ${CONTACT_EMAIL_FROM:-}
+      # Giving. Both or neither: the API refuses unsigned gifts, so a URL with
+      # no secret is a 401 waiting to happen and /give treats it as unconfigured.
+      # Unset, the page says giving is not switched on and points at the
+      # mission's funding site — it never accepts a number and does nothing.
+      # PATHWAY_GIVING_SECRET must equal the API's WEBSITE_GIVING_WEBHOOK_SECRET.
+      PATHWAY_API_URL: ${PATHWAY_API_URL:-}
+      PATHWAY_GIVING_SECRET: ${PATHWAY_GIVING_SECRET:-}
     ports:
       # Host port and bind address are both box state, not repo state — set
       # WEB_PORT and WEB_BIND in .env. The container always listens on 3000.

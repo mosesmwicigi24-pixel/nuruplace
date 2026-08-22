@@ -32,6 +32,9 @@ services:
       CONTACT_EMAIL_API: ${CONTACT_EMAIL_API:-}
       CONTACT_EMAIL_KEY: ${CONTACT_EMAIL_KEY:-}
       CONTACT_EMAIL_FROM: ${CONTACT_EMAIL_FROM:-}
+      # Giving — see docker-compose.yml for why both are needed or neither.
+      PATHWAY_API_URL: ${PATHWAY_API_URL:-}
+      PATHWAY_GIVING_SECRET: ${PATHWAY_GIVING_SECRET:-}
     networks:
       direct:
         # Fixed, so nginx can hard-code it. A container that gets whatever

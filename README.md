@@ -240,6 +240,38 @@ error server-side. That is deliberate: it fails where you can see it.
 
 ---
 
+## Giving
+
+`/give` takes an amount and an M-Pesa number and asks Pathway to send a payment
+request to that phone. Nothing sensitive crosses this server: the giver enters
+their PIN on their own handset, with Safaricom, and we learn the outcome only
+when Safaricom tells Pathway.
+
+Set **both**, or neither:
+
+```bash
+PATHWAY_API_URL=https://pathway.nuruplace.org/v1
+PATHWAY_GIVING_SECRET=…   # same value as the API's WEBSITE_GIVING_WEBHOOK_SECRET
+```
+
+Both, because the API refuses unsigned gifts — a URL with no secret is a 401
+waiting to happen, so the page treats it as unconfigured. Generate a secret with
+`openssl rand -hex 32`.
+
+Unset, or if the API is unreachable, or if M-Pesa is not wired on its side,
+`/give` says giving from the website is not switched on and points at the
+mission's funding site and a phone number. Same rule as the contact form, and it
+matters more here: a giving form that accepts a number and does nothing takes
+someone's decision to give and discards it while they believe they have given.
+
+Two parsers carry a cost when they are quietly wrong — a phone parser that
+accepts a landline sends a payment request nobody can answer, and an amount
+parser routed through a float loses a cent and leaves a ledger that will not
+reconcile. `npm run check:giving` executes both, and self-tests that it is
+capable of failing before reporting that it passed.
+
+---
+
 ## Performance
 
 Measured on a cold mobile load (390px, compressed over the wire):
