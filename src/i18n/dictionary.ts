@@ -130,6 +130,18 @@ export type Dictionary = {
     errFailed: string;
     unavailable: string;
     unavailableBody: string;
+    /** After the gift lands. `thanksBody` carries {amount} and {fund}. */
+    waitingForConfirmation: string;
+    thanksTitle: string;
+    thanksBody: string;
+    thanksVerse: string;
+    thanksVerseRef: string;
+    /** `thanksReceipt` carries {code}. */
+    thanksReceipt: string;
+    thanksSms: string;
+    notCompletedTitle: string;
+    notCompletedBody: string;
+    tryAgain: string;
   };
   home: {
     heroTitle: string;
@@ -309,6 +321,17 @@ const en: Dictionary = {
     unavailable: "Giving from the website is not available right now",
     unavailableBody:
       "You can still give through the Nuru Pathway app, or in person on Sunday. Call us if you would like help.",
+    waitingForConfirmation: "Waiting for your confirmation…",
+    thanksTitle: "Thank you",
+    thanksBody: "Your gift of {amount} to {fund} has gone through. It will be put to the work you gave it for.",
+    thanksVerse: "God is able to bless you abundantly, so that in all things at all times, having all that you need, you will abound in every good work.",
+    thanksVerseRef: "2 Corinthians 9:8",
+    thanksReceipt: "M-Pesa reference {code} — the same code as in your message from Safaricom.",
+    thanksSms: "We have sent a short confirmation to your phone as well.",
+    notCompletedTitle: "That gift did not go through",
+    notCompletedBody:
+      "Nothing has been taken from your account. The request may have been cancelled or timed out — you are welcome to try again.",
+    tryAgain: "Try again",
   },
   home: {
     heroTitle: "You're Welcome Here",
@@ -495,6 +518,17 @@ const sw: Dictionary = {
     unavailable: "Kutoa kupitia tovuti hakupatikani kwa sasa",
     unavailableBody:
       "Bado unaweza kutoa kupitia programu ya Nuru Pathway, au ana kwa ana siku ya Jumapili. Tupigie simu ukihitaji msaada.",
+    waitingForConfirmation: "Tunasubiri uthibitisho wako…",
+    thanksTitle: "Asante",
+    thanksBody: "Zawadi yako ya {amount} kwa {fund} imekamilika. Itatumika kwa kazi uliyoitolea.",
+    thanksVerse: "Mungu aweza kuwajaza kila neema kwa wingi, ili mkiwa na riziki za kutosha siku zote katika mambo yote, mzidi sana katika kila tendo jema.",
+    thanksVerseRef: "2 Wakorintho 9:8",
+    thanksReceipt: "Kumbukumbu ya M-Pesa {code} — ni namba ile ile iliyo katika ujumbe wako kutoka Safaricom.",
+    thanksSms: "Pia tumetuma uthibitisho mfupi kwenye simu yako.",
+    notCompletedTitle: "Zawadi hiyo haikukamilika",
+    notCompletedBody:
+      "Hakuna kilichotolewa kwenye akaunti yako. Huenda ombi lilighairiwa au muda wake kuisha — unakaribishwa kujaribu tena.",
+    tryAgain: "Jaribu tena",
   },
   home: {
     heroTitle: "Umekaribishwa Hapa",

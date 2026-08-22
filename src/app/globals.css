@@ -1264,3 +1264,51 @@ select.input {
   .hero-inner { padding-block: var(--s-10); }
   .hero-inner .t-hero { font-size: clamp(1.75rem, 4vw, 2.5rem); }
 }
+
+/* ─── The thank-you after a gift ─────────────────────────────────────────── */
+.gift-thanks { background: var(--brand-50); border-color: var(--brand-200); }
+.gift-thanks svg { color: var(--brand-600); }
+
+/* The verse is the emotional centre of this screen, so it gets the display
+   face and room to breathe rather than being another paragraph. */
+.gift-verse {
+  margin: var(--s-6) 0 0;
+  padding: var(--s-5);
+  background: var(--surface);
+  border-radius: var(--radius);
+  text-align: left;
+}
+.gift-verse p { font-family: var(--font-display); font-size: 0.9375rem; color: var(--ink-700); }
+.gift-verse cite {
+  display: block;
+  margin-top: var(--s-2);
+  font-size: 0.8125rem;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--brand-700);
+}
+
+/* A gift that did not complete is not an error the visitor caused, so this is
+   warmer than .alert — no red panel for someone who simply changed their mind. */
+.gift-unfinished { background: var(--surface-sunk); border-color: var(--line); }
+.gift-unfinished svg { color: var(--ink-500); }
+
+/* Three dots that say "still going" without a spinner. Motion is decorative
+   here, so prefers-reduced-motion drops it entirely and the text alone carries
+   the meaning. */
+.gift-waiting::after {
+  content: "";
+  display: inline-block;
+  width: 1.2em;
+  text-align: left;
+  animation: gift-dots 1.5s steps(4, end) infinite;
+}
+@keyframes gift-dots {
+  0%   { content: ""; }
+  25%  { content: "."; }
+  50%  { content: ".."; }
+  75%  { content: "..."; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gift-waiting::after { animation: none; content: ""; }
+}

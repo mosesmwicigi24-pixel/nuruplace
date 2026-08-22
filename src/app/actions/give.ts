@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import {
   sendGift,
+  fetchGiftStatus,
   givingConfigured,
   GivingNotConfiguredError,
   GivingThrottledError,
@@ -14,6 +15,38 @@ import {
   GIVING_MIN_MINOR,
   GIVING_MAX_MINOR,
 } from "@/lib/money";
+
+/**
+ * Ask whether a gift has landed.
+ *
+ * A server action rather than a public route, because the query has to be
+ * signed and the secret must never reach the browser. The transaction id is a
+ * UUIDv4 the client received when it created the gift; guessing one is not a
+ * practical attack, and the response carries no phone number or name.
+ *
+ * Returns "unknown" when we could not tell. The caller keeps waiting: a
+ * timeout is not a failed gift, and the person has already paid.
+ */
+export async function checkGift(
+  transactionId: string,
+): Promise<{ state: "waiting" | "given" | "failed" | "unknown"; amountMinor?: number; currency?: string; fund?: string | null; receipt?: string | null }> {
+  if (!/^[0-9a-fA-F-]{36}$/.test(transactionId)) return { state: "unknown" };
+  const gift = await fetchGiftStatus(transactionId);
+  if (!gift) return { state: "unknown" };
+  if (gift.status === "succeeded") {
+    return {
+      state: "given",
+      amountMinor: gift.amount_minor,
+      currency: gift.currency,
+      fund: gift.fund,
+      receipt: gift.receipt_code,
+    };
+  }
+  // `refunded` is not reachable mid-flow, but it is terminal and definitely not
+  // a gift in progress, so it belongs on this side of the line.
+  if (gift.status === "failed" || gift.status === "refunded") return { state: "failed" };
+  return { state: "waiting" };
+}
 
 export type GiveState = {
   status: "idle" | "ok" | "error";
@@ -34,6 +67,8 @@ export type GiveState = {
   waitMinutes?: number;
   /** On success, the number the push went to, echoed so they can check it. */
   sentTo?: string;
+  /** Lets the confirmation screen poll until the gift actually settles. */
+  transactionId?: string;
 };
 
 const MAX = { name: 120, email: 255, fund: 40 } as const;
@@ -110,7 +145,7 @@ export async function submitGift(
     h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip")?.trim() || undefined;
 
   try {
-    await sendGift({
+    const { transactionId } = await sendGift({
       fund,
       amount_minor: amountMinor,
       currency: "KES",
@@ -121,7 +156,9 @@ export async function submitGift(
       idempotency_key: idempotencyKey,
       client_ip: clientIp,
     });
-    return { status: "ok", sentTo: phone };
+    // The id is what lets the page find out whether the gift landed, instead of
+    // leaving "check your phone" on screen forever.
+    return { status: "ok", sentTo: phone, transactionId };
   } catch (err) {
     if (err instanceof GivingNotConfiguredError) {
       return { status: "error", message: "notConfigured" };
