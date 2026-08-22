@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { CalendarDays, MapPin, Mic } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { t } from "@/content/localized";
@@ -20,6 +21,17 @@ export function MinistryCard({
   const href = localePath(locale, `/ministries/${ministry.slug}`);
   return (
     <article className="card">
+      {ministry.cover && (
+        <Link href={href} className="card-media">
+          <Image
+            src={ministry.cover.src}
+            alt={t(ministry.cover.alt, locale)}
+            width={ministry.cover.width}
+            height={ministry.cover.height}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          />
+        </Link>
+      )}
       <h3 className="t-card card-title">
         <Link href={href}>{t(ministry.name, locale)}</Link>
       </h3>

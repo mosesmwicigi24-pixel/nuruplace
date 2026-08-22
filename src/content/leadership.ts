@@ -1,10 +1,13 @@
 import type { Localized } from "./localized";
 
 /**
- * Church leadership. Names and photographs have not been supplied yet — the
- * live site listed only one role publicly. Replace these entries with the real
- * team and add a `photo` path (e.g. "/leadership/name.jpg") once portraits
- * exist in /public.
+ * Church leadership.
+ *
+ * The two portraits came from the old CodeIgniter site, which the church had
+ * been running since 2018; the names were confirmed by the pastor rather than
+ * inferred from filenames. Putting a guessed name under a face on a church
+ * website is worse than an empty slot, so the remaining entries stay marked
+ * `placeholder` until someone says who they are.
  */
 export type Leader = {
   name: string;
@@ -17,22 +20,22 @@ export type Leader = {
 
 export const leadership: Leader[] = [
   {
-    name: "—",
+    name: "Pastor Moses Mwicigi",
     role: { en: "Senior Pastor", sw: "Mchungaji Mkuu" },
     bio: {
       en: "Leads The Good News Mission and its missionary sending work.",
       sw: "Anaongoza The Good News Mission na kazi yake ya kutuma wamisionari.",
     },
-    placeholder: true,
+    photo: "/leadership/moses-mwicigi.webp",
   },
   {
-    name: "—",
+    name: "Jackline Mwicigi",
     role: { en: "First Lady", sw: "Mama Kanisa" },
     bio: {
       en: "Serves alongside the Senior Pastor with particular care for the women of the fellowship.",
       sw: "Anahudumu pamoja na Mchungaji Mkuu akiwajali hasa wanawake wa ushirika.",
     },
-    placeholder: true,
+    photo: "/leadership/jackline-mwicigi.webp",
   },
   {
     name: "—",

@@ -1088,3 +1088,20 @@ code {
 /* The photograph sits above the tone and below the text. */
 .hero-slide .hero-photo { z-index: 0; }
 .hero-slide .hero-inner { position: relative; z-index: 1; }
+
+/* Ministry card photograph. Fixed aspect so a row of cards keeps its rhythm
+   whatever shape the church's photographs happen to be — a 4:3 beside a 16:9
+   makes a grid look broken rather than varied. */
+.card-media {
+  display: block;
+  margin: calc(var(--s-5) * -1) calc(var(--s-5) * -1) var(--s-5);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+}
+
+.card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

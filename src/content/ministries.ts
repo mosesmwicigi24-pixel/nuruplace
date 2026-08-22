@@ -11,11 +11,31 @@ export type Ministry = {
   summary: Localized<string>;
   body: Localized<string[]>;
   leader?: string;
+  /**
+   * Photograph for the ministry card. Optional and often absent: a ministry
+   * without a picture shows its card without one, which is honest, rather
+   * than borrowing a stock image of strangers doing something similar.
+   */
+  cover?: {
+    src: string;
+    width: number;
+    height: number;
+    alt: Localized<string>;
+  };
 };
 
 export const ministries: Ministry[] = [
   {
     slug: "ablaze-worship",
+    cover: {
+      src: "/ministries/ablaze-worship.webp",
+      width: 1440,
+      height: 957,
+      alt: {
+        en: "A guitarist leading worship practice, other players seated around her with guitars",
+        sw: "Mpiga gita akiongoza mazoezi ya ibada, wapiga vyombo wengine wameketi kando yake na magita",
+      },
+    },
     name: { en: "Ablaze Worship", sw: "Ibada ya Ablaze" },
     summary: {
       en: "Our worship ministry — leading the congregation into the presence of God and raising up worship leaders.",
