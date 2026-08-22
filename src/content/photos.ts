@@ -26,9 +26,12 @@ export type Photo = {
 export const photos: Record<string, Photo> = {
   /** Wide shot behind the home page hero. People, mid-worship, not an empty room. */
   hero: {
+    src: "/photos/hero-worship.webp",
+    width: 1740,
+    height: 1160,
     alt: {
-      en: "The congregation at The Good News Mission during a Sunday service",
-      sw: "Kusanyiko la The Good News Mission wakati wa ibada ya Jumapili",
+      en: "The congregation of The Good News Mission standing in worship with hands raised, a worship leader singing at the front",
+      sw: "Kusanyiko la The Good News Mission wamesimama katika ibada mikono juu, kiongozi wa ibada akiimba mbele",
     },
   },
   /** The building or gate, so a first-time visitor recognises it on arrival. */
@@ -46,16 +49,22 @@ export const photos: Record<string, Photo> = {
    * word without putting a person in it.
    */
   heroScripture: {
+    src: "/photos/hero-scripture.webp",
+    width: 1920,
+    height: 799,
     alt: {
-      en: "Morning light falling across the sanctuary at The Good News Mission",
-      sw: "Mwanga wa asubuhi ukiingia ndani ya kanisa la The Good News Mission",
+      en: "An open Bible with Mark 10 marked in yellow highlighter, where blind Bartimaeus calls out to Jesus and is told his faith has healed him",
+      sw: "Biblia iliyofunguliwa ikionyesha Marko 10 imepigiwa mstari wa manjano, ambapo Bartimayo kipofu anamwita Yesu na kuambiwa imani yake imemponya",
     },
   },
   /** Behind hero slide 3 (the welcome). People arriving or greeting — warm, real. */
   heroWelcome: {
+    src: "/photos/hero-teaching.webp",
+    width: 2000,
+    height: 991,
     alt: {
-      en: "Members welcoming one another before a Sunday service",
-      sw: "Waumini wakikaribishana kabla ya ibada ya Jumapili",
+      en: "Teaching at a campus fellowship: a speaker beside a lectern in a lecture hall, students listening from the tiered benches",
+      sw: "Mafundisho katika ushirika wa chuo: mzungumzaji kando ya jukwaa katika ukumbi wa mihadhara, wanafunzi wakisikiliza kutoka viti vya juu",
     },
   },
   /** Welcome team or people talking after a service — used on Plan Your Visit. */
